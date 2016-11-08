@@ -23,23 +23,13 @@
     "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.11.1",
-    "clean-webpack-plugin": "^0.1.13",
-    "copy-webpack-plugin": "2.1.6",
     "css-loader": "^0.25.0",
     "eslint": "^2.13.1",
     "eslint-loader": "^1.5.0",
     "eslint-plugin-react": "^6.2.1",
-    "handlebars": "^4.0.5",
-    "handlebars-loader": "^1.4.0",
-    "html-webpack-plugin": "^2.22.0",
-    "i18n-react": "^0.3.0-ts1",
     "node-sass": "^3.9.3",
-    "react-router": "^2.8.0",
     "sass-loader": "^4.0.2",
-    "sass-resources-loader": "^1.1.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.15.1",
-    "webpack-merge": "^0.14.1"
+    "webpack": "^1.13.2"
   }
 }
