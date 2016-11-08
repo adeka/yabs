@@ -17,4 +17,8 @@ navigate to `/build` in the git repo and load this folder
 
 the extension will appear in your chrome toolbar as a little gear
 
-click it and it will run the compiled react code
+run `webpack` to compile the `/app` folder to `build` and pipe it through webpack's loaders, bundling it into a single js file
+
+click the gear in your chrome bar and see the contents of `app/js/YabsApp.jsx`, compiled
+
+run `webpack --watch` to have webpack auto recompile upon file change
