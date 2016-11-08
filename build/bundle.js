@@ -21459,10 +21459,10 @@
 	var YabsApp = function (_React$Component) {
 	    _inherits(YabsApp, _React$Component);
 
-	    function YabsApp(props) {
+	    function YabsApp() {
 	        _classCallCheck(this, YabsApp);
 
-	        return _possibleConstructorReturn(this, (YabsApp.__proto__ || Object.getPrototypeOf(YabsApp)).call(this, props));
+	        return _possibleConstructorReturn(this, (YabsApp.__proto__ || Object.getPrototypeOf(YabsApp)).apply(this, arguments));
 	    }
 
 	    _createClass(YabsApp, [{
