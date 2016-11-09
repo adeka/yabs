@@ -1,11 +1,60 @@
 html {
   box-sizing: border-box;
-  height: 100%;
+  width: 100%;
+  background: rgb(240, 240, 240);
 }
 *, *:before, *:after {
   box-sizing: inherit;
 }
 #app {
-    width: 300px;
+    width: 250px;
     height: 550px;
+}
+.header {
+    font-size: 13px;
+    color: #666;
+    font-weight: bold;
+    text-align: center;
+    padding:.5em;
+    text-transform: lowercase;
+    overflow: auto;
+    margin: 0 auto;
+    background: linear-gradient(rgb(220, 220, 220), rgb(240, 240, 240));
+    width: 100%;
+    border-top-right-radius: .5em;
+    border-top-left-radius: .5em;
+}
+.bookmarkList {
+    .bookmark {
+        text-decoration: none;
+
+        font-size: 12px;
+        display: inline-block;
+        padding: .5em;
+        padding-left: 0;
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        img {
+            width: 16px;
+            float: left;
+            margin-right: 1em;
+        }
+        .title {
+            float: left;
+            overflow:hidden;
+            width: 65%;
+            color: #555;
+        }
+        .date{
+            font-size: 10px;
+            color: #777;
+            float:right;
+            width:20%;
+            text-align: right;
+        }
+        &:hover {
+            background: rgba(0,0,0,.1);
+        }
+    }
 }

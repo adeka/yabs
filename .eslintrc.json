@@ -27,7 +27,7 @@
      ********************/
     "comma-dangle": ["error", "never"],
     "no-cond-assign": "error",
-    "no-console": "warn",
+    "no-console": "off",
     "no-constant-condition": "error",
     "no-control-regex": "error",
     "no-debugger": "error",
@@ -144,7 +144,7 @@
     "no-restricted-globals": ["error", "event"],
     "no-shadow": ["error", { "hoist": "functions" }],
     "no-shadow-restricted-names": "error",
-    "no-undef": "error",
+    "no-undef": "off",
     "no-undef-init": "error",
     "no-undefined": "error",
     "no-unused-vars": ["warn", { "vars": "local", "args": "after-used" }],
@@ -192,7 +192,7 @@
     "keyword-spacing": "error",
     "linebreak-style": ["error", "unix"],
     "lines-around-comment": [
-      "warn", {
+      "off", {
         "beforeBlockComment": true,
         "beforeLineComment": true,
         "allowBlockStart": true,
@@ -261,7 +261,7 @@
     "space-infix-ops": "error",
     "space-unary-ops": "error",
     "spaced-comment": [
-      "error",
+      "off",
       "always",
       {
         "block": { "exceptions": ["*"] },
@@ -275,7 +275,7 @@
      *  ECMAScript 6
      *
      ********************/
-    "arrow-body-style": ["error", "as-needed"],
+    "arrow-body-style": ["off", "as-needed"],
     "arrow-parens": "error",
     "arrow-spacing": "error",
     "constructor-super": "error",

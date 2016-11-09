@@ -2,15 +2,30 @@
   "manifest_version": 2,
 
   "name": "Gramps YABS",
-  "description": "This extension shows a Google Image search result for the current page",
+  "description": "Bookmark Manager",
   "version": "1.0",
+
+  "commands": {
+    "toggle_yabs": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Toggle"
+    }
+  },
 
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
+
+  "chrome_url_overrides" : {
+    "newtab": "popup.html"
+  },
+
   "permissions": [
-    "activeTab",
-    "https://ajax.googleapis.com/"
+    "bookmarks",
+    "chrome://favicon/"
   ]
 }
