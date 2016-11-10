@@ -1,4 +1,5 @@
 import React from 'react';
+import Collapse from 'react-collapse';
 import { observer } from 'mobx-react';
 import { observable, action, computed, autorun } from 'mobx';
 
@@ -51,7 +52,6 @@ export default class YabsApp extends React.Component {
     static propTypes = {
         bookmarkStore: React.PropTypes.any
     }
-
     render() {
         const bookmarks = this.props.bookmarkStore.bookmarks;
         const topLevel = [];
@@ -72,16 +72,36 @@ export default class YabsApp extends React.Component {
                 return <Bookmark bookmark={child} key={child.id}/>;
             });
             return (
-                <div className="bookmarkGroup" key={folder.id}>
-                    <div className="header">{folder.title}</div>
-                    {children}
-                </div>
+                <BookmarkGroup children={children} key={folder.id} folder={folder}/>
             );
         });
         return (
             <div className="bookmarkList">
                 {this.topLevelLinks}
                 {this.folderLinks}
+            </div>
+        );
+    }
+}
+@observer class BookmarkGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { collapsed: false };
+    }
+    static propTypes = {
+        children: React.PropTypes.any,
+        folder: React.PropTypes.any
+    }
+    onClick() {
+        this.setState({ 'collapsed': !this.state.collapsed });
+    }
+    render() {
+        return (
+            <div className="bookmarkGroup">
+                <div className="header" onClick={this.onClick.bind(this)}>{this.props.folder.title}</div>
+                <Collapse isOpened={this.state.collapsed}>
+                    {this.props.children}
+                </Collapse>
             </div>
         );
     }
@@ -105,7 +125,7 @@ class Bookmark extends React.Component {
         const year = date.getFullYear();
 
         return (
-            <a className="bookmark" href={title}>
+            <a className="bookmark" href={bookmark.title} target="_blank">
                 <img src={imageURL} />
                 <div className="title">{title}</div>
                 <div className="date">{`${ day }, ${ month }`}</div>
