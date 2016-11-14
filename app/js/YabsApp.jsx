@@ -1,10 +1,11 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Collapse from 'react-collapse';
 import { observer } from 'mobx-react';
 import { observable, action, computed, autorun } from 'mobx';
 import 'fa';
 
-class BookmarkStore {
+class BookmarkListStore {
     @observable bookmarks = [];
     load() {
         chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
@@ -12,7 +13,7 @@ class BookmarkStore {
     assignBookmarks(bookmarks) {
         //retarded way of accessing "Bookmarks Bar" array of children
         const bookmarkTree = bookmarks[0].children[0].children;
-        this.bookmarks.length = 0;
+        //this.bookmarks.length = 0;
         this.bookmarks = bookmarkTree;
         //console.log(bookmarkTree);
     }
@@ -40,7 +41,7 @@ Bookmark chrome api schema
 export default class YabsApp extends React.Component {
     constructor() {
         super();
-        this.store = new BookmarkStore();
+        this.store = new BookmarkListStore();
         this.store.load();
         //console.log(chrome.bookmarks);
     }
@@ -112,7 +113,7 @@ export default class YabsApp extends React.Component {
 @observer class BookmarkGroup extends React.Component {
     constructor(props) {
         super(props);
-        const state = Boolean(localStorage.getItem(this.props.folder.id));
+        const state = JSON.parse(localStorage.getItem(this.props.folder.id));
         this.state = { collapsed: state };
     }
     static propTypes = {
@@ -156,7 +157,15 @@ export default class YabsApp extends React.Component {
     }
 }
 
-class Bookmark extends React.Component {
+class BookmarkStore {
+    @observable content = <div></div>;
+    @action setContent(content) {
+        this.content = content;
+    }
+}
+
+
+@observer class Bookmark extends React.Component {
     static propTypes = {
         bookmark: React.PropTypes.any,
         id: React.PropTypes.any,
@@ -165,7 +174,6 @@ class Bookmark extends React.Component {
     constructor(props) {
         super(props);
         const bookmark = this.props.bookmark;
-        this.state = { renaming: false };
 
         //title and URL
         this.imageURL = `chrome://favicon/${ bookmark.url }`;
@@ -181,28 +189,10 @@ class Bookmark extends React.Component {
         this.month = this.monthNames[this.date.getMonth()];
         this.year = this.date.getFullYear();
 
-        this.id = props.id;
-        this.store = props.store;
+        this.store = new BookmarkStore();
 
-        this.refreshContents();
-    }
-    refreshContents() {
-        if (this.state.renaming) {
-            this.content =
-            <input
-                className="title"
-                placeholder={this.props.bookmark.title}
-                onChange={this.onChange.bind(this)}
-                onKeyPress={this.handleKeyPress.bind(this)}
-                ref={this.setInputField.bind(this)}
-            ></input>;
-        } else {
-            this.content =
-            <a href={this.props.bookmark.url} target="_blank">
-                <div className="title">{this.title}</div>
-                <div className="date">{`${ this.day }, ${ this.month }`}</div>
-            </a>;
-        }
+        this.renaming = false;
+        this.setDefaultContent();
     }
     removeBookmark() {
         chrome.bookmarks.remove(this.props.id, () => {
@@ -217,7 +207,9 @@ class Bookmark extends React.Component {
             };
             if (val.length > 0) {
                 chrome.bookmarks.update(this.props.id, changes, () => {
-                    this.props.store.load();
+                    this.title = val;
+                    this.renaming = false;
+                    this.setDefaultContent();
                 });
             }
         }
@@ -225,21 +217,51 @@ class Bookmark extends React.Component {
     setInputField(field) {
         this.nameField = field;
     }
+    setDefaultContent() {
+        const content =
+        <a href={this.props.bookmark.url} target="_blank">
+            <div className="title">{this.title}</div>
+            <div className="date">{`${ this.day }, ${ this.month }`}</div>
+        </a>;
+        this.store.setContent(content);
+    }
+    setInputContent() {
+        const content =
+        <input
+            className="title"
+            placeholder={this.props.bookmark.title}
+            onChange={this.onChange.bind(this)}
+            onKeyPress={this.handleKeyPress.bind(this)}
+            ref={this.setInputField.bind(this)}
+            autoFocus
+        ></input>;
+        this.store.setContent(content);
+    }
     renameBookmark() {
-        this.setState({ renaming: !this.state.renaming }, () => {
-            this.refreshContents();
-        });
+        this.renaming = !this.renaming;
+        if (this.renaming) {
+            this.setInputContent();
+        } else {
+            this.setDefaultContent();
+        }
     }
     onChange() {
+
     }
     render() {
         const bookmark = this.props.bookmark;
+        let editStyle = 'fa fa-pencil';
+        if (this.renaming) {
+            editStyle = 'fa fa-pencil dark';
+        } else {
+            editStyle = 'fa fa-pencil';
+        }
         return (
             <div className="bookmark">
                 <img src={this.imageURL} />
-                {this.content}
+                {this.store.content}
                 <i className="fa fa-remove" onClick={this.removeBookmark.bind(this)}/>
-                <i className="fa fa-pencil" onClick={this.renameBookmark.bind(this)}/>
+                <i className={editStyle} onClick={this.renameBookmark.bind(this)}/>
             </div>
         );
     }
