@@ -21444,8 +21444,6 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _desc, _value, _class, _descriptor, _class3, _class4, _temp, _class5, _class6, _temp2, _desc2, _value2, _class7, _descriptor2, _class9, _class10, _temp3;
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -21454,117 +21452,20 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactCollapse = __webpack_require__(177);
+	var _ListView = __webpack_require__(208);
 
-	var _reactCollapse2 = _interopRequireDefault(_reactCollapse);
-
-	var _mobxReact = __webpack_require__(197);
-
-	var _mobx = __webpack_require__(198);
-
-	__webpack_require__(199);
+	var _ListView2 = _interopRequireDefault(_ListView);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	function _initDefineProp(target, property, descriptor, context) {
-	    if (!descriptor) return;
-	    Object.defineProperty(target, property, {
-	        enumerable: descriptor.enumerable,
-	        configurable: descriptor.configurable,
-	        writable: descriptor.writable,
-	        value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
-	    });
-	}
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
-	    var desc = {};
-	    Object['ke' + 'ys'](descriptor).forEach(function (key) {
-	        desc[key] = descriptor[key];
-	    });
-	    desc.enumerable = !!desc.enumerable;
-	    desc.configurable = !!desc.configurable;
-
-	    if ('value' in desc || desc.initializer) {
-	        desc.writable = true;
-	    }
-
-	    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
-	        return decorator(target, property, desc) || desc;
-	    }, desc);
-
-	    if (context && desc.initializer !== void 0) {
-	        desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
-	        desc.initializer = undefined;
-	    }
-
-	    if (desc.initializer === void 0) {
-	        Object['define' + 'Property'](target, property, desc);
-	        desc = null;
-	    }
-
-	    return desc;
-	}
-
-	function _initializerWarningHelper(descriptor, context) {
-	    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
-	}
-
-	var BookmarkListStore = (_class = function () {
-	    function BookmarkListStore() {
-	        _classCallCheck(this, BookmarkListStore);
-
-	        _initDefineProp(this, 'bookmarks', _descriptor, this);
-	    }
-
-	    _createClass(BookmarkListStore, [{
-	        key: 'load',
-	        value: function load() {
-	            chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
-	        }
-	    }, {
-	        key: 'assignBookmarks',
-	        value: function assignBookmarks(bookmarks) {
-	            //retarded way of accessing "Bookmarks Bar" array of children
-	            var bookmarkTree = bookmarks[0].children[0].children;
-	            //this.bookmarks.length = 0;
-	            this.bookmarks = bookmarkTree;
-	            //console.log(bookmarkTree);
-	        }
-	    }], [{
-	        key: 'getInstance',
-	        value: function getInstance() {
-	            if (!this.instance) {
-	                this.instance = new this();
-	            }
-	            return this.instance;
-	        }
-	    }]);
-
-	    return BookmarkListStore;
-	}(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'bookmarks', [_mobx.observable], {
-	    enumerable: true,
-	    initializer: function initializer() {
-	        return [];
-	    }
-	})), _class);
-
-	/*
-	Bookmark chrome api schema
-	-children (if it is a folder)
-	-dateAdded
-	-dateGroupModified
-	-id
-	-index
-	-parentID
-	-title
-	-url (if it isn not a folder)
-	*/
+	var placeholder = document.createElement('li');
+	placeholder.className = 'placeholder';
 
 	var YabsApp = function (_React$Component) {
 	    _inherits(YabsApp, _React$Component);
@@ -21572,22 +21473,16 @@
 	    function YabsApp() {
 	        _classCallCheck(this, YabsApp);
 
-	        var _this = _possibleConstructorReturn(this, (YabsApp.__proto__ || Object.getPrototypeOf(YabsApp)).call(this));
-
-	        _this.store = new BookmarkListStore();
-	        _this.store.load();
-	        //console.log(chrome.bookmarks);
-	        return _this;
+	        return _possibleConstructorReturn(this, (YabsApp.__proto__ || Object.getPrototypeOf(YabsApp)).apply(this, arguments));
 	    }
 
 	    _createClass(YabsApp, [{
 	        key: 'render',
 	        value: function render() {
-	            // console.log(this.bookmarkTree);
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(ListView, { store: this.store })
+	                _react2.default.createElement(_ListView2.default, null)
 	            );
 	        }
 	    }]);
@@ -21596,309 +21491,6 @@
 	}(_react2.default.Component);
 
 	exports.default = YabsApp;
-
-	var ListView = (0, _mobxReact.observer)(_class3 = (_temp = _class4 = function (_React$Component2) {
-	    _inherits(ListView, _React$Component2);
-
-	    function ListView() {
-	        _classCallCheck(this, ListView);
-
-	        return _possibleConstructorReturn(this, (ListView.__proto__ || Object.getPrototypeOf(ListView)).apply(this, arguments));
-	    }
-
-	    _createClass(ListView, [{
-	        key: 'dragStart',
-	        value: function dragStart(e) {
-	            this.dragged = e.currentTarget;
-	            e.dataTransfer.effectAllowed = 'move';
-
-	            // Firefox requires calling dataTransfer.setData
-	            // for the drag to properly work
-	            e.dataTransfer.setData('text/html', e.currentTarget);
-	            console.log('asdf');
-	        }
-	    }, {
-	        key: 'dragEnd',
-	        value: function dragEnd() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _this3 = this;
-
-	            var bookmarks = this.props.store.bookmarks;
-	            var topLevel = [];
-	            var folders = [];
-	            bookmarks.forEach(function (value) {
-	                if (!value.children) {
-	                    topLevel.push(value);
-	                } else {
-	                    folders.push(value);
-	                }
-	            });
-	            this.topLevelLinks = topLevel.map(function (bookmark, i) {
-	                return _react2.default.createElement(Bookmark, { bookmark: bookmark, key: bookmark.id });
-	            });
-	            this.folderLinks = folders.map(function (folder) {
-	                var children = folder.children.map(function (child, i) {
-	                    return _react2.default.createElement(Bookmark, {
-	                        bookmark: child,
-	                        key: child.id,
-	                        store: _this3.props.store,
-	                        id: child.id,
-	                        'data-id': i,
-	                        draggable: 'true',
-	                        onDragEnd: _this3.dragEnd,
-	                        onDragStart: _this3.dragStart.bind(_this3)
-	                    });
-	                });
-	                return _react2.default.createElement(BookmarkGroup, { children: children, key: folder.id, folder: folder, store: _this3.props.store });
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'bookmarkList' },
-	                this.topLevelLinks,
-	                this.folderLinks
-	            );
-	        }
-	    }]);
-
-	    return ListView;
-	}(_react2.default.Component), _class4.propTypes = {
-	    store: _react2.default.PropTypes.any
-	}, _temp)) || _class3;
-
-	var BookmarkGroup = (0, _mobxReact.observer)(_class5 = (_temp2 = _class6 = function (_React$Component3) {
-	    _inherits(BookmarkGroup, _React$Component3);
-
-	    function BookmarkGroup(props) {
-	        _classCallCheck(this, BookmarkGroup);
-
-	        var _this4 = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
-
-	        var state = JSON.parse(localStorage.getItem(_this4.props.folder.id));
-	        _this4.state = { collapsed: state };
-	        return _this4;
-	    }
-
-	    _createClass(BookmarkGroup, [{
-	        key: 'expand',
-	        value: function expand() {
-	            var _this5 = this;
-
-	            this.setState({ collapsed: !this.state.collapsed }, function () {
-	                localStorage.setItem(_this5.props.folder.id, _this5.state.collapsed);
-	            });
-	        }
-	    }, {
-	        key: 'addBookmark',
-	        value: function addBookmark() {
-	            var _this6 = this;
-
-	            var id = this.props.folder.id;
-	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
-	                var url = tabs[0].url;
-	                var bookmark = {
-	                    parentId: id,
-	                    index: 0,
-	                    title: url,
-	                    url: url
-	                };
-	                chrome.bookmarks.create(bookmark);
-	                _this6.props.store.load();
-	            });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'bookmarkGroup' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'header' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'title', onClick: this.expand.bind(this) },
-	                        this.props.folder.title
-	                    ),
-	                    _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) })
-	                ),
-	                _react2.default.createElement(
-	                    _reactCollapse2.default,
-	                    { isOpened: this.state.collapsed },
-	                    this.props.children
-	                )
-	            );
-	        }
-	    }]);
-
-	    return BookmarkGroup;
-	}(_react2.default.Component), _class6.propTypes = {
-	    children: _react2.default.PropTypes.any,
-	    folder: _react2.default.PropTypes.any,
-	    store: _react2.default.PropTypes.any
-	}, _temp2)) || _class5;
-
-	var BookmarkStore = (_class7 = function () {
-	    function BookmarkStore() {
-	        _classCallCheck(this, BookmarkStore);
-
-	        _initDefineProp(this, 'content', _descriptor2, this);
-	    }
-
-	    _createClass(BookmarkStore, [{
-	        key: 'setContent',
-	        value: function setContent(content) {
-	            this.content = content;
-	        }
-	    }]);
-
-	    return BookmarkStore;
-	}(), (_descriptor2 = _applyDecoratedDescriptor(_class7.prototype, 'content', [_mobx.observable], {
-	    enumerable: true,
-	    initializer: function initializer() {
-	        return _react2.default.createElement('div', null);
-	    }
-	}), _applyDecoratedDescriptor(_class7.prototype, 'setContent', [_mobx.action], Object.getOwnPropertyDescriptor(_class7.prototype, 'setContent'), _class7.prototype)), _class7);
-
-	var Bookmark = (0, _mobxReact.observer)(_class9 = (_temp3 = _class10 = function (_React$Component4) {
-	    _inherits(Bookmark, _React$Component4);
-
-	    function Bookmark(props) {
-	        _classCallCheck(this, Bookmark);
-
-	        var _this7 = _possibleConstructorReturn(this, (Bookmark.__proto__ || Object.getPrototypeOf(Bookmark)).call(this, props));
-
-	        var bookmark = _this7.props.bookmark;
-
-	        //title and URL
-	        _this7.imageURL = 'chrome://favicon/' + bookmark.url;
-	        _this7.title = bookmark.title;
-	        if (bookmark.title === bookmark.url) {
-	            _this7.title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
-	        }
-
-	        //dates
-	        _this7.monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	        _this7.date = new Date(bookmark.dateAdded);
-	        _this7.day = _this7.date.getDate();
-	        _this7.month = _this7.monthNames[_this7.date.getMonth()];
-	        _this7.year = _this7.date.getFullYear();
-
-	        _this7.store = new BookmarkStore();
-
-	        _this7.renaming = false;
-	        _this7.setDefaultContent();
-	        return _this7;
-	    }
-
-	    _createClass(Bookmark, [{
-	        key: 'removeBookmark',
-	        value: function removeBookmark() {
-	            var _this8 = this;
-
-	            chrome.bookmarks.remove(this.props.id, function () {
-	                _this8.props.store.load();
-	            });
-	        }
-	    }, {
-	        key: 'handleKeyPress',
-	        value: function handleKeyPress(event) {
-	            var _this9 = this;
-
-	            if (event.key === 'Enter') {
-	                (function () {
-	                    var val = _this9.nameField.value;
-	                    var changes = {
-	                        title: val
-	                    };
-	                    if (val.length > 0) {
-	                        chrome.bookmarks.update(_this9.props.id, changes, function () {
-	                            _this9.title = val;
-	                            _this9.renaming = false;
-	                            _this9.setDefaultContent();
-	                        });
-	                    }
-	                })();
-	            }
-	        }
-	    }, {
-	        key: 'setInputField',
-	        value: function setInputField(field) {
-	            this.nameField = field;
-	        }
-	    }, {
-	        key: 'setDefaultContent',
-	        value: function setDefaultContent() {
-	            var content = _react2.default.createElement(
-	                'a',
-	                { href: this.props.bookmark.url, target: '_blank' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'title' },
-	                    this.title
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'date' },
-	                    this.day + ', ' + this.month
-	                )
-	            );
-	            this.store.setContent(content);
-	        }
-	    }, {
-	        key: 'setInputContent',
-	        value: function setInputContent() {
-	            var content = _react2.default.createElement('input', {
-	                className: 'title',
-	                placeholder: this.props.bookmark.title,
-	                onChange: this.onChange.bind(this),
-	                onKeyPress: this.handleKeyPress.bind(this),
-	                ref: this.setInputField.bind(this),
-	                autoFocus: true
-	            });
-	            this.store.setContent(content);
-	        }
-	    }, {
-	        key: 'renameBookmark',
-	        value: function renameBookmark() {
-	            this.renaming = !this.renaming;
-	            if (this.renaming) {
-	                this.setInputContent();
-	            } else {
-	                this.setDefaultContent();
-	            }
-	        }
-	    }, {
-	        key: 'onChange',
-	        value: function onChange() {}
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var bookmark = this.props.bookmark;
-	            var editStyle = 'fa fa-pencil';
-	            if (this.renaming) {
-	                editStyle = 'fa fa-pencil dark';
-	            } else {
-	                editStyle = 'fa fa-pencil';
-	            }
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'bookmark' },
-	                _react2.default.createElement('img', { src: this.imageURL }),
-	                this.store.content,
-	                _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeBookmark.bind(this) }),
-	                _react2.default.createElement('i', { className: editStyle, onClick: this.renameBookmark.bind(this) })
-	            );
-	        }
-	    }]);
-
-	    return Bookmark;
-	}(_react2.default.Component), _class10.propTypes = {
-	    bookmark: _react2.default.PropTypes.any,
-	    id: _react2.default.PropTypes.any,
-	    store: _react2.default.PropTypes.any
-	}, _temp3)) || _class9;
 
 /***/ },
 /* 173 */
@@ -21935,7 +21527,7 @@
 
 
 	// module
-	exports.push([module.id, "@-webkit-keyframes ScootInAnimation {\n  0% {\n    opacity: 0;\n    left: -500px; }\n  60% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    left: 0px; } }\n\n.ScootIn, .bookmarkList .bookmark {\n  position: relative;\n  opacity: 0;\n  animation: ScootInAnimation .3s forwards; }\n  .ScootIn:nth-child(1), .bookmarkList .bookmark:nth-child(1) {\n    animation-delay: 0.01333s; }\n  .ScootIn:nth-child(2), .bookmarkList .bookmark:nth-child(2) {\n    animation-delay: 0.02667s; }\n  .ScootIn:nth-child(3), .bookmarkList .bookmark:nth-child(3) {\n    animation-delay: 0.04s; }\n  .ScootIn:nth-child(4), .bookmarkList .bookmark:nth-child(4) {\n    animation-delay: 0.05333s; }\n  .ScootIn:nth-child(5), .bookmarkList .bookmark:nth-child(5) {\n    animation-delay: 0.06667s; }\n  .ScootIn:nth-child(6), .bookmarkList .bookmark:nth-child(6) {\n    animation-delay: 0.08s; }\n  .ScootIn:nth-child(7), .bookmarkList .bookmark:nth-child(7) {\n    animation-delay: 0.09333s; }\n  .ScootIn:nth-child(8), .bookmarkList .bookmark:nth-child(8) {\n    animation-delay: 0.10667s; }\n  .ScootIn:nth-child(9), .bookmarkList .bookmark:nth-child(9) {\n    animation-delay: 0.12s; }\n  .ScootIn:nth-child(10), .bookmarkList .bookmark:nth-child(10) {\n    animation-delay: 0.13333s; }\n  .ScootIn:nth-child(11), .bookmarkList .bookmark:nth-child(11) {\n    animation-delay: 0.14667s; }\n  .ScootIn:nth-child(12), .bookmarkList .bookmark:nth-child(12) {\n    animation-delay: 0.16s; }\n  .ScootIn:nth-child(13), .bookmarkList .bookmark:nth-child(13) {\n    animation-delay: 0.17333s; }\n  .ScootIn:nth-child(14), .bookmarkList .bookmark:nth-child(14) {\n    animation-delay: 0.18667s; }\n  .ScootIn:nth-child(15), .bookmarkList .bookmark:nth-child(15) {\n    animation-delay: 0.2s; }\n  .ScootIn:nth-child(16), .bookmarkList .bookmark:nth-child(16) {\n    animation-delay: 0.21333s; }\n  .ScootIn:nth-child(17), .bookmarkList .bookmark:nth-child(17) {\n    animation-delay: 0.22667s; }\n  .ScootIn:nth-child(18), .bookmarkList .bookmark:nth-child(18) {\n    animation-delay: 0.24s; }\n  .ScootIn:nth-child(19), .bookmarkList .bookmark:nth-child(19) {\n    animation-delay: 0.25333s; }\n  .ScootIn:nth-child(20), .bookmarkList .bookmark:nth-child(20) {\n    animation-delay: 0.26667s; }\n  .ScootIn:nth-child(21), .bookmarkList .bookmark:nth-child(21) {\n    animation-delay: 0.28s; }\n  .ScootIn:nth-child(22), .bookmarkList .bookmark:nth-child(22) {\n    animation-delay: 0.29333s; }\n  .ScootIn:nth-child(23), .bookmarkList .bookmark:nth-child(23) {\n    animation-delay: 0.30667s; }\n  .ScootIn:nth-child(24), .bookmarkList .bookmark:nth-child(24) {\n    animation-delay: 0.32s; }\n  .ScootIn:nth-child(25), .bookmarkList .bookmark:nth-child(25) {\n    animation-delay: 0.33333s; }\n  .ScootIn:nth-child(26), .bookmarkList .bookmark:nth-child(26) {\n    animation-delay: 0.34667s; }\n  .ScootIn:nth-child(27), .bookmarkList .bookmark:nth-child(27) {\n    animation-delay: 0.36s; }\n  .ScootIn:nth-child(28), .bookmarkList .bookmark:nth-child(28) {\n    animation-delay: 0.37333s; }\n  .ScootIn:nth-child(29), .bookmarkList .bookmark:nth-child(29) {\n    animation-delay: 0.38667s; }\n  .ScootIn:nth-child(30), .bookmarkList .bookmark:nth-child(30) {\n    animation-delay: 0.4s; }\n  .ScootIn:nth-child(31), .bookmarkList .bookmark:nth-child(31) {\n    animation-delay: 0.41333s; }\n  .ScootIn:nth-child(32), .bookmarkList .bookmark:nth-child(32) {\n    animation-delay: 0.42667s; }\n  .ScootIn:nth-child(33), .bookmarkList .bookmark:nth-child(33) {\n    animation-delay: 0.44s; }\n  .ScootIn:nth-child(34), .bookmarkList .bookmark:nth-child(34) {\n    animation-delay: 0.45333s; }\n  .ScootIn:nth-child(35), .bookmarkList .bookmark:nth-child(35) {\n    animation-delay: 0.46667s; }\n  .ScootIn:nth-child(36), .bookmarkList .bookmark:nth-child(36) {\n    animation-delay: 0.48s; }\n  .ScootIn:nth-child(37), .bookmarkList .bookmark:nth-child(37) {\n    animation-delay: 0.49333s; }\n  .ScootIn:nth-child(38), .bookmarkList .bookmark:nth-child(38) {\n    animation-delay: 0.50667s; }\n  .ScootIn:nth-child(39), .bookmarkList .bookmark:nth-child(39) {\n    animation-delay: 0.52s; }\n  .ScootIn:nth-child(40), .bookmarkList .bookmark:nth-child(40) {\n    animation-delay: 0.53333s; }\n  .ScootIn:nth-child(41), .bookmarkList .bookmark:nth-child(41) {\n    animation-delay: 0.54667s; }\n  .ScootIn:nth-child(42), .bookmarkList .bookmark:nth-child(42) {\n    animation-delay: 0.56s; }\n  .ScootIn:nth-child(43), .bookmarkList .bookmark:nth-child(43) {\n    animation-delay: 0.57333s; }\n  .ScootIn:nth-child(44), .bookmarkList .bookmark:nth-child(44) {\n    animation-delay: 0.58667s; }\n  .ScootIn:nth-child(45), .bookmarkList .bookmark:nth-child(45) {\n    animation-delay: 0.6s; }\n  .ScootIn:nth-child(46), .bookmarkList .bookmark:nth-child(46) {\n    animation-delay: 0.61333s; }\n  .ScootIn:nth-child(47), .bookmarkList .bookmark:nth-child(47) {\n    animation-delay: 0.62667s; }\n  .ScootIn:nth-child(48), .bookmarkList .bookmark:nth-child(48) {\n    animation-delay: 0.64s; }\n  .ScootIn:nth-child(49), .bookmarkList .bookmark:nth-child(49) {\n    animation-delay: 0.65333s; }\n  .ScootIn:nth-child(50), .bookmarkList .bookmark:nth-child(50) {\n    animation-delay: 0.66667s; }\n  .ScootIn:nth-child(51), .bookmarkList .bookmark:nth-child(51) {\n    animation-delay: 0.68s; }\n  .ScootIn:nth-child(52), .bookmarkList .bookmark:nth-child(52) {\n    animation-delay: 0.69333s; }\n  .ScootIn:nth-child(53), .bookmarkList .bookmark:nth-child(53) {\n    animation-delay: 0.70667s; }\n  .ScootIn:nth-child(54), .bookmarkList .bookmark:nth-child(54) {\n    animation-delay: 0.72s; }\n  .ScootIn:nth-child(55), .bookmarkList .bookmark:nth-child(55) {\n    animation-delay: 0.73333s; }\n  .ScootIn:nth-child(56), .bookmarkList .bookmark:nth-child(56) {\n    animation-delay: 0.74667s; }\n  .ScootIn:nth-child(57), .bookmarkList .bookmark:nth-child(57) {\n    animation-delay: 0.76s; }\n  .ScootIn:nth-child(58), .bookmarkList .bookmark:nth-child(58) {\n    animation-delay: 0.77333s; }\n  .ScootIn:nth-child(59), .bookmarkList .bookmark:nth-child(59) {\n    animation-delay: 0.78667s; }\n  .ScootIn:nth-child(60), .bookmarkList .bookmark:nth-child(60) {\n    animation-delay: 0.8s; }\n  .ScootIn:nth-child(61), .bookmarkList .bookmark:nth-child(61) {\n    animation-delay: 0.81333s; }\n  .ScootIn:nth-child(62), .bookmarkList .bookmark:nth-child(62) {\n    animation-delay: 0.82667s; }\n  .ScootIn:nth-child(63), .bookmarkList .bookmark:nth-child(63) {\n    animation-delay: 0.84s; }\n  .ScootIn:nth-child(64), .bookmarkList .bookmark:nth-child(64) {\n    animation-delay: 0.85333s; }\n  .ScootIn:nth-child(65), .bookmarkList .bookmark:nth-child(65) {\n    animation-delay: 0.86667s; }\n  .ScootIn:nth-child(66), .bookmarkList .bookmark:nth-child(66) {\n    animation-delay: 0.88s; }\n  .ScootIn:nth-child(67), .bookmarkList .bookmark:nth-child(67) {\n    animation-delay: 0.89333s; }\n  .ScootIn:nth-child(68), .bookmarkList .bookmark:nth-child(68) {\n    animation-delay: 0.90667s; }\n  .ScootIn:nth-child(69), .bookmarkList .bookmark:nth-child(69) {\n    animation-delay: 0.92s; }\n  .ScootIn:nth-child(70), .bookmarkList .bookmark:nth-child(70) {\n    animation-delay: 0.93333s; }\n  .ScootIn:nth-child(71), .bookmarkList .bookmark:nth-child(71) {\n    animation-delay: 0.94667s; }\n  .ScootIn:nth-child(72), .bookmarkList .bookmark:nth-child(72) {\n    animation-delay: 0.96s; }\n  .ScootIn:nth-child(73), .bookmarkList .bookmark:nth-child(73) {\n    animation-delay: 0.97333s; }\n  .ScootIn:nth-child(74), .bookmarkList .bookmark:nth-child(74) {\n    animation-delay: 0.98667s; }\n  .ScootIn:nth-child(75), .bookmarkList .bookmark:nth-child(75) {\n    animation-delay: 1s; }\n  .ScootIn:nth-child(76), .bookmarkList .bookmark:nth-child(76) {\n    animation-delay: 1.01333s; }\n  .ScootIn:nth-child(77), .bookmarkList .bookmark:nth-child(77) {\n    animation-delay: 1.02667s; }\n  .ScootIn:nth-child(78), .bookmarkList .bookmark:nth-child(78) {\n    animation-delay: 1.04s; }\n  .ScootIn:nth-child(79), .bookmarkList .bookmark:nth-child(79) {\n    animation-delay: 1.05333s; }\n  .ScootIn:nth-child(80), .bookmarkList .bookmark:nth-child(80) {\n    animation-delay: 1.06667s; }\n  .ScootIn:nth-child(81), .bookmarkList .bookmark:nth-child(81) {\n    animation-delay: 1.08s; }\n  .ScootIn:nth-child(82), .bookmarkList .bookmark:nth-child(82) {\n    animation-delay: 1.09333s; }\n  .ScootIn:nth-child(83), .bookmarkList .bookmark:nth-child(83) {\n    animation-delay: 1.10667s; }\n  .ScootIn:nth-child(84), .bookmarkList .bookmark:nth-child(84) {\n    animation-delay: 1.12s; }\n  .ScootIn:nth-child(85), .bookmarkList .bookmark:nth-child(85) {\n    animation-delay: 1.13333s; }\n  .ScootIn:nth-child(86), .bookmarkList .bookmark:nth-child(86) {\n    animation-delay: 1.14667s; }\n  .ScootIn:nth-child(87), .bookmarkList .bookmark:nth-child(87) {\n    animation-delay: 1.16s; }\n  .ScootIn:nth-child(88), .bookmarkList .bookmark:nth-child(88) {\n    animation-delay: 1.17333s; }\n  .ScootIn:nth-child(89), .bookmarkList .bookmark:nth-child(89) {\n    animation-delay: 1.18667s; }\n  .ScootIn:nth-child(90), .bookmarkList .bookmark:nth-child(90) {\n    animation-delay: 1.2s; }\n  .ScootIn:nth-child(91), .bookmarkList .bookmark:nth-child(91) {\n    animation-delay: 1.21333s; }\n  .ScootIn:nth-child(92), .bookmarkList .bookmark:nth-child(92) {\n    animation-delay: 1.22667s; }\n  .ScootIn:nth-child(93), .bookmarkList .bookmark:nth-child(93) {\n    animation-delay: 1.24s; }\n  .ScootIn:nth-child(94), .bookmarkList .bookmark:nth-child(94) {\n    animation-delay: 1.25333s; }\n  .ScootIn:nth-child(95), .bookmarkList .bookmark:nth-child(95) {\n    animation-delay: 1.26667s; }\n  .ScootIn:nth-child(96), .bookmarkList .bookmark:nth-child(96) {\n    animation-delay: 1.28s; }\n  .ScootIn:nth-child(97), .bookmarkList .bookmark:nth-child(97) {\n    animation-delay: 1.29333s; }\n  .ScootIn:nth-child(98), .bookmarkList .bookmark:nth-child(98) {\n    animation-delay: 1.30667s; }\n  .ScootIn:nth-child(99), .bookmarkList .bookmark:nth-child(99) {\n    animation-delay: 1.32s; }\n  .ScootIn:nth-child(100), .bookmarkList .bookmark:nth-child(100) {\n    animation-delay: 1.33333s; }\n\nhtml {\n  box-sizing: border-box;\n  width: 100%;\n  background: #f0f0f0;\n  width: 360px;\n  min-height: 1000px;\n  max-width: 360px;\n  overflow: scroll; }\n\nbody {\n  padding: 0;\n  margin: 0; }\n\n*, *:before, *:after {\n  box-sizing: inherit; }\n\n#app {\n  width: 100%; }\n\n.header {\n  font-size: 13px;\n  color: #666;\n  font-weight: bold;\n  text-align: center;\n  text-transform: lowercase;\n  overflow: auto;\n  margin: 0 auto;\n  background: linear-gradient(#e6e6e6, #f0f0f0);\n  border-bottom: 1px solid #e2e2e2;\n  width: 100%;\n  cursor: pointer; }\n  .header .title {\n    width: 60%;\n    float: left;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .header .title:hover {\n      background: #e6e6e6; }\n  .header .fa {\n    width: 40%;\n    border-left: 1px solid #eaeaea;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .header .fa:hover {\n      background: #e6e6e6; }\n\n.bookmarkList .bookmark {\n  text-decoration: none;\n  font-size: 12px;\n  display: inline-block;\n  width: 100%;\n  white-space: nowrap;\n  height: 32px; }\n  .bookmarkList .bookmark img {\n    width: 16px;\n    float: left;\n    margin: 7px;\n    margin-right: 1em;\n    transition: .1s all; }\n  .bookmarkList .bookmark input {\n    /*\n            padding: 5px;\n            margin-top: 4px;\n            background: #fbfafa;\n            border: 1px solid #cecece;\n            border-radius: 2px;\n            width: 70%;\n            */\n    padding: 5px;\n    margin-top: 3px;\n    background: #fbfafa;\n    border: 1px solid #cecece;\n    border-radius: 2px;\n    width: 70%;\n    position: relative;\n    left: -6px;\n    font-size: 12px;\n    padding-top: 4px; }\n  .bookmarkList .bookmark a {\n    line-height: 30px;\n    width: 70%;\n    height: 29px;\n    display: inline-block; }\n    .bookmarkList .bookmark a .title {\n      float: left;\n      overflow: hidden;\n      width: 65%;\n      color: #555;\n      transition: .1s all; }\n    .bookmarkList .bookmark a .date {\n      font-size: 10px;\n      color: #777;\n      float: left;\n      width: 20%;\n      text-align: right; }\n  .bookmarkList .bookmark .fa {\n    color: #666;\n    padding: 10px;\n    width: 9%;\n    float: right;\n    border-left: 1px solid #cccccc;\n    cursor: pointer; }\n    .bookmarkList .bookmark .fa:hover {\n      background: rgba(0, 0, 0, 0.1); }\n    .bookmarkList .bookmark .fa.dark {\n      background: rgba(0, 0, 0, 0.1); }\n  .bookmarkList .bookmark:hover {\n    background: #fbfafa;\n    /*\n            a .title{\n                font-size: 14px;\n                font-weight: bold;\n            }\n            a img{\n                position: relative;\n                transform: scale(2);\n            }\n            */ }\n", ""]);
+	exports.push([module.id, "@-webkit-keyframes ScootInAnimation {\n  0% {\n    opacity: 0;\n    left: -500px; }\n  60% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    left: 0px; } }\n\n.ScootIn, .bookmarkList .bookmark {\n  position: relative;\n  opacity: 0;\n  animation: ScootInAnimation .3s forwards; }\n  .ScootIn:nth-child(1), .bookmarkList .bookmark:nth-child(1) {\n    animation-delay: 0.01333s; }\n  .ScootIn:nth-child(2), .bookmarkList .bookmark:nth-child(2) {\n    animation-delay: 0.02667s; }\n  .ScootIn:nth-child(3), .bookmarkList .bookmark:nth-child(3) {\n    animation-delay: 0.04s; }\n  .ScootIn:nth-child(4), .bookmarkList .bookmark:nth-child(4) {\n    animation-delay: 0.05333s; }\n  .ScootIn:nth-child(5), .bookmarkList .bookmark:nth-child(5) {\n    animation-delay: 0.06667s; }\n  .ScootIn:nth-child(6), .bookmarkList .bookmark:nth-child(6) {\n    animation-delay: 0.08s; }\n  .ScootIn:nth-child(7), .bookmarkList .bookmark:nth-child(7) {\n    animation-delay: 0.09333s; }\n  .ScootIn:nth-child(8), .bookmarkList .bookmark:nth-child(8) {\n    animation-delay: 0.10667s; }\n  .ScootIn:nth-child(9), .bookmarkList .bookmark:nth-child(9) {\n    animation-delay: 0.12s; }\n  .ScootIn:nth-child(10), .bookmarkList .bookmark:nth-child(10) {\n    animation-delay: 0.13333s; }\n  .ScootIn:nth-child(11), .bookmarkList .bookmark:nth-child(11) {\n    animation-delay: 0.14667s; }\n  .ScootIn:nth-child(12), .bookmarkList .bookmark:nth-child(12) {\n    animation-delay: 0.16s; }\n  .ScootIn:nth-child(13), .bookmarkList .bookmark:nth-child(13) {\n    animation-delay: 0.17333s; }\n  .ScootIn:nth-child(14), .bookmarkList .bookmark:nth-child(14) {\n    animation-delay: 0.18667s; }\n  .ScootIn:nth-child(15), .bookmarkList .bookmark:nth-child(15) {\n    animation-delay: 0.2s; }\n  .ScootIn:nth-child(16), .bookmarkList .bookmark:nth-child(16) {\n    animation-delay: 0.21333s; }\n  .ScootIn:nth-child(17), .bookmarkList .bookmark:nth-child(17) {\n    animation-delay: 0.22667s; }\n  .ScootIn:nth-child(18), .bookmarkList .bookmark:nth-child(18) {\n    animation-delay: 0.24s; }\n  .ScootIn:nth-child(19), .bookmarkList .bookmark:nth-child(19) {\n    animation-delay: 0.25333s; }\n  .ScootIn:nth-child(20), .bookmarkList .bookmark:nth-child(20) {\n    animation-delay: 0.26667s; }\n  .ScootIn:nth-child(21), .bookmarkList .bookmark:nth-child(21) {\n    animation-delay: 0.28s; }\n  .ScootIn:nth-child(22), .bookmarkList .bookmark:nth-child(22) {\n    animation-delay: 0.29333s; }\n  .ScootIn:nth-child(23), .bookmarkList .bookmark:nth-child(23) {\n    animation-delay: 0.30667s; }\n  .ScootIn:nth-child(24), .bookmarkList .bookmark:nth-child(24) {\n    animation-delay: 0.32s; }\n  .ScootIn:nth-child(25), .bookmarkList .bookmark:nth-child(25) {\n    animation-delay: 0.33333s; }\n  .ScootIn:nth-child(26), .bookmarkList .bookmark:nth-child(26) {\n    animation-delay: 0.34667s; }\n  .ScootIn:nth-child(27), .bookmarkList .bookmark:nth-child(27) {\n    animation-delay: 0.36s; }\n  .ScootIn:nth-child(28), .bookmarkList .bookmark:nth-child(28) {\n    animation-delay: 0.37333s; }\n  .ScootIn:nth-child(29), .bookmarkList .bookmark:nth-child(29) {\n    animation-delay: 0.38667s; }\n  .ScootIn:nth-child(30), .bookmarkList .bookmark:nth-child(30) {\n    animation-delay: 0.4s; }\n  .ScootIn:nth-child(31), .bookmarkList .bookmark:nth-child(31) {\n    animation-delay: 0.41333s; }\n  .ScootIn:nth-child(32), .bookmarkList .bookmark:nth-child(32) {\n    animation-delay: 0.42667s; }\n  .ScootIn:nth-child(33), .bookmarkList .bookmark:nth-child(33) {\n    animation-delay: 0.44s; }\n  .ScootIn:nth-child(34), .bookmarkList .bookmark:nth-child(34) {\n    animation-delay: 0.45333s; }\n  .ScootIn:nth-child(35), .bookmarkList .bookmark:nth-child(35) {\n    animation-delay: 0.46667s; }\n  .ScootIn:nth-child(36), .bookmarkList .bookmark:nth-child(36) {\n    animation-delay: 0.48s; }\n  .ScootIn:nth-child(37), .bookmarkList .bookmark:nth-child(37) {\n    animation-delay: 0.49333s; }\n  .ScootIn:nth-child(38), .bookmarkList .bookmark:nth-child(38) {\n    animation-delay: 0.50667s; }\n  .ScootIn:nth-child(39), .bookmarkList .bookmark:nth-child(39) {\n    animation-delay: 0.52s; }\n  .ScootIn:nth-child(40), .bookmarkList .bookmark:nth-child(40) {\n    animation-delay: 0.53333s; }\n  .ScootIn:nth-child(41), .bookmarkList .bookmark:nth-child(41) {\n    animation-delay: 0.54667s; }\n  .ScootIn:nth-child(42), .bookmarkList .bookmark:nth-child(42) {\n    animation-delay: 0.56s; }\n  .ScootIn:nth-child(43), .bookmarkList .bookmark:nth-child(43) {\n    animation-delay: 0.57333s; }\n  .ScootIn:nth-child(44), .bookmarkList .bookmark:nth-child(44) {\n    animation-delay: 0.58667s; }\n  .ScootIn:nth-child(45), .bookmarkList .bookmark:nth-child(45) {\n    animation-delay: 0.6s; }\n  .ScootIn:nth-child(46), .bookmarkList .bookmark:nth-child(46) {\n    animation-delay: 0.61333s; }\n  .ScootIn:nth-child(47), .bookmarkList .bookmark:nth-child(47) {\n    animation-delay: 0.62667s; }\n  .ScootIn:nth-child(48), .bookmarkList .bookmark:nth-child(48) {\n    animation-delay: 0.64s; }\n  .ScootIn:nth-child(49), .bookmarkList .bookmark:nth-child(49) {\n    animation-delay: 0.65333s; }\n  .ScootIn:nth-child(50), .bookmarkList .bookmark:nth-child(50) {\n    animation-delay: 0.66667s; }\n  .ScootIn:nth-child(51), .bookmarkList .bookmark:nth-child(51) {\n    animation-delay: 0.68s; }\n  .ScootIn:nth-child(52), .bookmarkList .bookmark:nth-child(52) {\n    animation-delay: 0.69333s; }\n  .ScootIn:nth-child(53), .bookmarkList .bookmark:nth-child(53) {\n    animation-delay: 0.70667s; }\n  .ScootIn:nth-child(54), .bookmarkList .bookmark:nth-child(54) {\n    animation-delay: 0.72s; }\n  .ScootIn:nth-child(55), .bookmarkList .bookmark:nth-child(55) {\n    animation-delay: 0.73333s; }\n  .ScootIn:nth-child(56), .bookmarkList .bookmark:nth-child(56) {\n    animation-delay: 0.74667s; }\n  .ScootIn:nth-child(57), .bookmarkList .bookmark:nth-child(57) {\n    animation-delay: 0.76s; }\n  .ScootIn:nth-child(58), .bookmarkList .bookmark:nth-child(58) {\n    animation-delay: 0.77333s; }\n  .ScootIn:nth-child(59), .bookmarkList .bookmark:nth-child(59) {\n    animation-delay: 0.78667s; }\n  .ScootIn:nth-child(60), .bookmarkList .bookmark:nth-child(60) {\n    animation-delay: 0.8s; }\n  .ScootIn:nth-child(61), .bookmarkList .bookmark:nth-child(61) {\n    animation-delay: 0.81333s; }\n  .ScootIn:nth-child(62), .bookmarkList .bookmark:nth-child(62) {\n    animation-delay: 0.82667s; }\n  .ScootIn:nth-child(63), .bookmarkList .bookmark:nth-child(63) {\n    animation-delay: 0.84s; }\n  .ScootIn:nth-child(64), .bookmarkList .bookmark:nth-child(64) {\n    animation-delay: 0.85333s; }\n  .ScootIn:nth-child(65), .bookmarkList .bookmark:nth-child(65) {\n    animation-delay: 0.86667s; }\n  .ScootIn:nth-child(66), .bookmarkList .bookmark:nth-child(66) {\n    animation-delay: 0.88s; }\n  .ScootIn:nth-child(67), .bookmarkList .bookmark:nth-child(67) {\n    animation-delay: 0.89333s; }\n  .ScootIn:nth-child(68), .bookmarkList .bookmark:nth-child(68) {\n    animation-delay: 0.90667s; }\n  .ScootIn:nth-child(69), .bookmarkList .bookmark:nth-child(69) {\n    animation-delay: 0.92s; }\n  .ScootIn:nth-child(70), .bookmarkList .bookmark:nth-child(70) {\n    animation-delay: 0.93333s; }\n  .ScootIn:nth-child(71), .bookmarkList .bookmark:nth-child(71) {\n    animation-delay: 0.94667s; }\n  .ScootIn:nth-child(72), .bookmarkList .bookmark:nth-child(72) {\n    animation-delay: 0.96s; }\n  .ScootIn:nth-child(73), .bookmarkList .bookmark:nth-child(73) {\n    animation-delay: 0.97333s; }\n  .ScootIn:nth-child(74), .bookmarkList .bookmark:nth-child(74) {\n    animation-delay: 0.98667s; }\n  .ScootIn:nth-child(75), .bookmarkList .bookmark:nth-child(75) {\n    animation-delay: 1s; }\n  .ScootIn:nth-child(76), .bookmarkList .bookmark:nth-child(76) {\n    animation-delay: 1.01333s; }\n  .ScootIn:nth-child(77), .bookmarkList .bookmark:nth-child(77) {\n    animation-delay: 1.02667s; }\n  .ScootIn:nth-child(78), .bookmarkList .bookmark:nth-child(78) {\n    animation-delay: 1.04s; }\n  .ScootIn:nth-child(79), .bookmarkList .bookmark:nth-child(79) {\n    animation-delay: 1.05333s; }\n  .ScootIn:nth-child(80), .bookmarkList .bookmark:nth-child(80) {\n    animation-delay: 1.06667s; }\n  .ScootIn:nth-child(81), .bookmarkList .bookmark:nth-child(81) {\n    animation-delay: 1.08s; }\n  .ScootIn:nth-child(82), .bookmarkList .bookmark:nth-child(82) {\n    animation-delay: 1.09333s; }\n  .ScootIn:nth-child(83), .bookmarkList .bookmark:nth-child(83) {\n    animation-delay: 1.10667s; }\n  .ScootIn:nth-child(84), .bookmarkList .bookmark:nth-child(84) {\n    animation-delay: 1.12s; }\n  .ScootIn:nth-child(85), .bookmarkList .bookmark:nth-child(85) {\n    animation-delay: 1.13333s; }\n  .ScootIn:nth-child(86), .bookmarkList .bookmark:nth-child(86) {\n    animation-delay: 1.14667s; }\n  .ScootIn:nth-child(87), .bookmarkList .bookmark:nth-child(87) {\n    animation-delay: 1.16s; }\n  .ScootIn:nth-child(88), .bookmarkList .bookmark:nth-child(88) {\n    animation-delay: 1.17333s; }\n  .ScootIn:nth-child(89), .bookmarkList .bookmark:nth-child(89) {\n    animation-delay: 1.18667s; }\n  .ScootIn:nth-child(90), .bookmarkList .bookmark:nth-child(90) {\n    animation-delay: 1.2s; }\n  .ScootIn:nth-child(91), .bookmarkList .bookmark:nth-child(91) {\n    animation-delay: 1.21333s; }\n  .ScootIn:nth-child(92), .bookmarkList .bookmark:nth-child(92) {\n    animation-delay: 1.22667s; }\n  .ScootIn:nth-child(93), .bookmarkList .bookmark:nth-child(93) {\n    animation-delay: 1.24s; }\n  .ScootIn:nth-child(94), .bookmarkList .bookmark:nth-child(94) {\n    animation-delay: 1.25333s; }\n  .ScootIn:nth-child(95), .bookmarkList .bookmark:nth-child(95) {\n    animation-delay: 1.26667s; }\n  .ScootIn:nth-child(96), .bookmarkList .bookmark:nth-child(96) {\n    animation-delay: 1.28s; }\n  .ScootIn:nth-child(97), .bookmarkList .bookmark:nth-child(97) {\n    animation-delay: 1.29333s; }\n  .ScootIn:nth-child(98), .bookmarkList .bookmark:nth-child(98) {\n    animation-delay: 1.30667s; }\n  .ScootIn:nth-child(99), .bookmarkList .bookmark:nth-child(99) {\n    animation-delay: 1.32s; }\n  .ScootIn:nth-child(100), .bookmarkList .bookmark:nth-child(100) {\n    animation-delay: 1.33333s; }\n\nhtml {\n  box-sizing: border-box;\n  width: 100%;\n  background: #f0f0f0;\n  width: 360px;\n  min-height: 1000px;\n  max-width: 360px;\n  overflow: scroll;\n  user-select: none; }\n\nbody {\n  padding: 0;\n  margin: 0; }\n\n*, *:before, *:after {\n  box-sizing: inherit; }\n\n#app {\n  width: 100%; }\n\n.header {\n  font-size: 13px;\n  color: #666;\n  font-weight: bold;\n  text-align: center;\n  text-transform: lowercase;\n  overflow: auto;\n  margin: 0 auto;\n  background: linear-gradient(#e6e6e6, #f0f0f0);\n  border-bottom: 1px solid #e2e2e2;\n  width: 100%;\n  cursor: pointer; }\n  .header .title {\n    width: 60%;\n    float: left;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .header .title:hover {\n      background: #e6e6e6; }\n  .header .fa {\n    width: 40%;\n    border-left: 1px solid #eaeaea;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .header .fa:hover {\n      background: #e6e6e6; }\n\n.bookmarkList .bookmark {\n  text-decoration: none;\n  font-size: 12px;\n  display: inline-block;\n  width: 100%;\n  white-space: nowrap;\n  height: 32px; }\n  .bookmarkList .bookmark img {\n    width: 16px;\n    float: left;\n    margin: 7px;\n    margin-right: 1em;\n    transition: .1s all; }\n  .bookmarkList .bookmark input {\n    /*\n            padding: 5px;\n            margin-top: 4px;\n            background: #fbfafa;\n            border: 1px solid #cecece;\n            border-radius: 2px;\n            width: 70%;\n            */\n    padding: 5px;\n    margin-top: 3px;\n    background: #fbfafa;\n    border: 1px solid #cecece;\n    border-radius: 2px;\n    width: 70%;\n    position: relative;\n    left: -6px;\n    font-size: 12px;\n    padding-top: 4px; }\n  .bookmarkList .bookmark a {\n    line-height: 30px;\n    width: 70%;\n    height: 29px;\n    display: inline-block; }\n    .bookmarkList .bookmark a .title {\n      float: left;\n      overflow: hidden;\n      width: 65%;\n      color: #555;\n      transition: .1s all; }\n    .bookmarkList .bookmark a .date {\n      font-size: 10px;\n      color: #777;\n      float: left;\n      width: 20%;\n      text-align: right; }\n  .bookmarkList .bookmark .fa {\n    color: #666;\n    padding: 10px;\n    width: 9%;\n    float: right;\n    border-left: 1px solid #cccccc;\n    cursor: pointer; }\n    .bookmarkList .bookmark .fa:hover {\n      background: rgba(0, 0, 0, 0.1); }\n    .bookmarkList .bookmark .fa.dark {\n      background: rgba(0, 0, 0, 0.1); }\n  .bookmarkList .bookmark:hover {\n    background: #fbfafa;\n    /*\n            a .title{\n                font-size: 14px;\n                font-weight: bold;\n            }\n            a img{\n                position: relative;\n                transform: scale(2);\n            }\n            */ }\n\nli.placeholder {\n  background: #fff078; }\n\nli.placeholder:before {\n  content: \"Drop here\";\n  color: #e1d25a; }\n", ""]);
 
 	// exports
 
@@ -28115,6 +27707,517 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "912ec66d7572ff821749319396470bde.svg";
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _desc, _value, _class, _descriptor, _class3, _class4, _temp;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _mobxReact = __webpack_require__(197);
+
+	var _mobx = __webpack_require__(198);
+
+	__webpack_require__(199);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _initDefineProp(target, property, descriptor, context) {
+	    if (!descriptor) return;
+	    Object.defineProperty(target, property, {
+	        enumerable: descriptor.enumerable,
+	        configurable: descriptor.configurable,
+	        writable: descriptor.writable,
+	        value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+	    });
+	}
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+	    var desc = {};
+	    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+	        desc[key] = descriptor[key];
+	    });
+	    desc.enumerable = !!desc.enumerable;
+	    desc.configurable = !!desc.configurable;
+
+	    if ('value' in desc || desc.initializer) {
+	        desc.writable = true;
+	    }
+
+	    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+	        return decorator(target, property, desc) || desc;
+	    }, desc);
+
+	    if (context && desc.initializer !== void 0) {
+	        desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+	        desc.initializer = undefined;
+	    }
+
+	    if (desc.initializer === void 0) {
+	        Object['define' + 'Property'](target, property, desc);
+	        desc = null;
+	    }
+
+	    return desc;
+	}
+
+	function _initializerWarningHelper(descriptor, context) {
+	    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+	}
+
+	/*
+	Bookmark chrome api schema
+	-children (if it is a folder)
+	-dateAdded
+	-dateGroupModified
+	-id
+	-index
+	-parentID
+	-title
+	-url (if it isn not a folder)
+	*/
+
+	var BookmarkStore = (_class = function () {
+	    function BookmarkStore() {
+	        _classCallCheck(this, BookmarkStore);
+
+	        _initDefineProp(this, 'content', _descriptor, this);
+	    }
+
+	    _createClass(BookmarkStore, [{
+	        key: 'setContent',
+	        value: function setContent(content) {
+	            this.content = content;
+	        }
+	    }]);
+
+	    return BookmarkStore;
+	}(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'content', [_mobx.observable], {
+	    enumerable: true,
+	    initializer: function initializer() {
+	        return _react2.default.createElement('div', null);
+	    }
+	}), _applyDecoratedDescriptor(_class.prototype, 'setContent', [_mobx.action], Object.getOwnPropertyDescriptor(_class.prototype, 'setContent'), _class.prototype)), _class);
+
+	var Bookmark = (0, _mobxReact.observer)(_class3 = (_temp = _class4 = function (_React$Component) {
+	    _inherits(Bookmark, _React$Component);
+
+	    function Bookmark(props) {
+	        _classCallCheck(this, Bookmark);
+
+	        var _this = _possibleConstructorReturn(this, (Bookmark.__proto__ || Object.getPrototypeOf(Bookmark)).call(this, props));
+
+	        var bookmark = _this.props.bookmark;
+
+	        //title and URL
+	        _this.imageURL = 'chrome://favicon/' + bookmark.url;
+	        _this.title = bookmark.title;
+	        if (bookmark.title === bookmark.url) {
+	            _this.title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
+	        }
+
+	        //dates
+	        _this.monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	        _this.date = new Date(bookmark.dateAdded);
+	        _this.day = _this.date.getDate();
+	        _this.month = _this.monthNames[_this.date.getMonth()];
+	        _this.year = _this.date.getFullYear();
+
+	        _this.store = new BookmarkStore();
+
+	        _this.renaming = false;
+	        _this.setDefaultContent();
+	        return _this;
+	    }
+
+	    _createClass(Bookmark, [{
+	        key: 'removeBookmark',
+	        value: function removeBookmark() {
+	            var _this2 = this;
+
+	            chrome.bookmarks.remove(this.props.id, function () {
+	                _this2.props.store.load();
+	            });
+	        }
+	    }, {
+	        key: 'handleKeyPress',
+	        value: function handleKeyPress(event) {
+	            var _this3 = this;
+
+	            if (event.key === 'Enter') {
+	                (function () {
+	                    var val = _this3.nameField.value;
+	                    var changes = {
+	                        title: val
+	                    };
+	                    if (val.length > 0) {
+	                        chrome.bookmarks.update(_this3.props.id, changes, function () {
+	                            _this3.title = val;
+	                            _this3.renaming = false;
+	                            _this3.setDefaultContent();
+	                        });
+	                    }
+	                })();
+	            }
+	        }
+	    }, {
+	        key: 'setInputField',
+	        value: function setInputField(field) {
+	            this.nameField = field;
+	        }
+	    }, {
+	        key: 'setDefaultContent',
+	        value: function setDefaultContent() {
+	            var content = _react2.default.createElement(
+	                'a',
+	                { href: this.props.bookmark.url, target: '_blank' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'title' },
+	                    this.title
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'date' },
+	                    this.day + ', ' + this.month
+	                )
+	            );
+	            this.store.setContent(content);
+	        }
+	    }, {
+	        key: 'setInputContent',
+	        value: function setInputContent() {
+	            var content = _react2.default.createElement('input', {
+	                className: 'title',
+	                placeholder: this.props.bookmark.title,
+	                onChange: this.onChange.bind(this),
+	                onKeyPress: this.handleKeyPress.bind(this),
+	                ref: this.setInputField.bind(this),
+	                autoFocus: true
+	            });
+	            this.store.setContent(content);
+	        }
+	    }, {
+	        key: 'renameBookmark',
+	        value: function renameBookmark() {
+	            this.renaming = !this.renaming;
+	            if (this.renaming) {
+	                this.setInputContent();
+	            } else {
+	                this.setDefaultContent();
+	            }
+	        }
+	    }, {
+	        key: 'onChange',
+	        value: function onChange() {}
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var bookmark = this.props.bookmark;
+	            var editStyle = 'fa fa-pencil';
+	            if (this.renaming) {
+	                editStyle = 'fa fa-pencil dark';
+	            } else {
+	                editStyle = 'fa fa-pencil';
+	            }
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmark' },
+	                _react2.default.createElement('img', { src: this.imageURL }),
+	                this.store.content,
+	                _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeBookmark.bind(this) }),
+	                _react2.default.createElement('i', { className: editStyle, onClick: this.renameBookmark.bind(this) })
+	            );
+	        }
+	    }]);
+
+	    return Bookmark;
+	}(_react2.default.Component), _class4.propTypes = {
+	    bookmark: _react2.default.PropTypes.any,
+	    id: _react2.default.PropTypes.any,
+	    store: _react2.default.PropTypes.any
+	}, _temp)) || _class3;
+
+	exports.default = Bookmark;
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _desc, _value, _class, _descriptor, _class3, _class4, _temp, _class5, _class6, _temp2;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactCollapse = __webpack_require__(177);
+
+	var _reactCollapse2 = _interopRequireDefault(_reactCollapse);
+
+	var _mobxReact = __webpack_require__(197);
+
+	var _mobx = __webpack_require__(198);
+
+	__webpack_require__(199);
+
+	var _Bookmark = __webpack_require__(207);
+
+	var _Bookmark2 = _interopRequireDefault(_Bookmark);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _initDefineProp(target, property, descriptor, context) {
+	    if (!descriptor) return;
+	    Object.defineProperty(target, property, {
+	        enumerable: descriptor.enumerable,
+	        configurable: descriptor.configurable,
+	        writable: descriptor.writable,
+	        value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
+	    });
+	}
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
+	    var desc = {};
+	    Object['ke' + 'ys'](descriptor).forEach(function (key) {
+	        desc[key] = descriptor[key];
+	    });
+	    desc.enumerable = !!desc.enumerable;
+	    desc.configurable = !!desc.configurable;
+
+	    if ('value' in desc || desc.initializer) {
+	        desc.writable = true;
+	    }
+
+	    desc = decorators.slice().reverse().reduce(function (desc, decorator) {
+	        return decorator(target, property, desc) || desc;
+	    }, desc);
+
+	    if (context && desc.initializer !== void 0) {
+	        desc.value = desc.initializer ? desc.initializer.call(context) : void 0;
+	        desc.initializer = undefined;
+	    }
+
+	    if (desc.initializer === void 0) {
+	        Object['define' + 'Property'](target, property, desc);
+	        desc = null;
+	    }
+
+	    return desc;
+	}
+
+	function _initializerWarningHelper(descriptor, context) {
+	    throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
+	}
+
+	var BookmarkListStore = (_class = function () {
+	    function BookmarkListStore() {
+	        _classCallCheck(this, BookmarkListStore);
+
+	        _initDefineProp(this, 'bookmarks', _descriptor, this);
+	    }
+
+	    _createClass(BookmarkListStore, [{
+	        key: 'load',
+	        value: function load() {
+	            chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
+	        }
+	    }, {
+	        key: 'assignBookmarks',
+	        value: function assignBookmarks(bookmarks) {
+	            //retarded way of accessing "Bookmarks Bar" array of children
+	            var bookmarkTree = bookmarks[0].children[0].children;
+	            this.bookmarks = bookmarkTree;
+	        }
+	    }], [{
+	        key: 'getInstance',
+	        value: function getInstance() {
+	            if (!this.instance) {
+	                this.instance = new this();
+	            }
+	            return this.instance;
+	        }
+	    }]);
+
+	    return BookmarkListStore;
+	}(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'bookmarks', [_mobx.observable], {
+	    enumerable: true,
+	    initializer: function initializer() {
+	        return [];
+	    }
+	})), _class);
+
+	var ListView = (0, _mobxReact.observer)(_class3 = (_temp = _class4 = function (_React$Component) {
+	    _inherits(ListView, _React$Component);
+
+	    function ListView(props) {
+	        _classCallCheck(this, ListView);
+
+	        var _this = _possibleConstructorReturn(this, (ListView.__proto__ || Object.getPrototypeOf(ListView)).call(this, props));
+
+	        _this.store = new BookmarkListStore();
+	        _this.store.load();
+	        return _this;
+	    }
+
+	    _createClass(ListView, [{
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var bookmarks = this.store.bookmarks;
+	            var topLevel = [];
+	            var folders = [];
+	            bookmarks.forEach(function (value) {
+	                if (!value.children) {
+	                    topLevel.push(value);
+	                } else {
+	                    folders.push(value);
+	                }
+	            });
+	            this.topLevelLinks = topLevel.map(function (bookmark, i) {
+	                return _react2.default.createElement(_Bookmark2.default, { bookmark: bookmark, key: bookmark.id });
+	            });
+	            this.folderLinks = folders.map(function (folder) {
+	                var children = folder.children.map(function (child, i) {
+	                    return _react2.default.createElement(_Bookmark2.default, {
+	                        bookmark: child,
+	                        key: child.id,
+	                        store: _this2.store,
+	                        id: child.id,
+	                        'data-id': i
+	                    });
+	                });
+	                return _react2.default.createElement(BookmarkGroup, { children: children, key: folder.id, folder: folder, store: _this2.store });
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmarkList' },
+	                this.topLevelLinks,
+	                this.folderLinks
+	            );
+	        }
+	    }]);
+
+	    return ListView;
+	}(_react2.default.Component), _class4.propTypes = {
+	    store: _react2.default.PropTypes.any
+	}, _temp)) || _class3;
+
+	exports.default = ListView;
+
+	var BookmarkGroup = (0, _mobxReact.observer)(_class5 = (_temp2 = _class6 = function (_React$Component2) {
+	    _inherits(BookmarkGroup, _React$Component2);
+
+	    function BookmarkGroup(props) {
+	        _classCallCheck(this, BookmarkGroup);
+
+	        var _this3 = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
+
+	        var state = JSON.parse(localStorage.getItem(_this3.props.folder.id));
+	        _this3.state = { collapsed: state };
+	        return _this3;
+	    }
+
+	    _createClass(BookmarkGroup, [{
+	        key: 'expand',
+	        value: function expand() {
+	            var _this4 = this;
+
+	            this.setState({ collapsed: !this.state.collapsed }, function () {
+	                localStorage.setItem(_this4.props.folder.id, _this4.state.collapsed);
+	            });
+	        }
+	    }, {
+	        key: 'addBookmark',
+	        value: function addBookmark() {
+	            var _this5 = this;
+
+	            var id = this.props.folder.id;
+	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+	                var url = tabs[0].url;
+	                var bookmark = {
+	                    parentId: id,
+	                    index: 0,
+	                    title: url,
+	                    url: url
+	                };
+	                chrome.bookmarks.create(bookmark);
+	                _this5.props.store.load();
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmarkGroup' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'header' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'title', onClick: this.expand.bind(this) },
+	                        this.props.folder.title
+	                    ),
+	                    _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) })
+	                ),
+	                _react2.default.createElement(
+	                    _reactCollapse2.default,
+	                    { isOpened: this.state.collapsed },
+	                    this.props.children
+	                )
+	            );
+	        }
+	    }]);
+
+	    return BookmarkGroup;
+	}(_react2.default.Component), _class6.propTypes = {
+	    children: _react2.default.PropTypes.any,
+	    folder: _react2.default.PropTypes.any,
+	    store: _react2.default.PropTypes.any
+	}, _temp2)) || _class5;
 
 /***/ }
 /******/ ]);
