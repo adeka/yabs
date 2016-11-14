@@ -147,7 +147,7 @@
     "no-undef": "off",
     "no-undef-init": "error",
     "no-undefined": "error",
-    "no-unused-vars": ["warn", { "vars": "local", "args": "after-used" }],
+    "no-unused-vars": ["off", { "vars": "local", "args": "after-used" }],
     "no-use-before-define": ["error", { "functions": false }],
 
     /********************

@@ -1,1 +1,20 @@
+//cute slide in animation for anything with children, simply inherit the .scootin class
+@-webkit-keyframes ScootInAnimation {
+  0% { opacity:0; left: -500px;}
+  60% { opacity:0; }
+  100% {opacity:1; left: 0px;}
+}
+.ScootIn{
+    position: relative;
+    opacity: 0;
+    animation: ScootInAnimation .3s forwards;
+    $count : 100;
+    @for $i from 1 through $count {
+        $delay: $i / 75;
+        &:nth-child(#{$i}){
+            animation-delay: #{$delay}s;
+        }
+    }
+}
+
 @import 'general.scss';

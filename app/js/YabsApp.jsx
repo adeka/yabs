@@ -2,13 +2,28 @@ import React from 'react';
 import Collapse from 'react-collapse';
 import { observer } from 'mobx-react';
 import { observable, action, computed, autorun } from 'mobx';
+import 'fa';
 
 class BookmarkStore {
     @observable bookmarks = [];
-    setBookmarks(bookmarks) {
-        this.bookmarks = bookmarks;
+    load() {
+        chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
+    }
+    assignBookmarks(bookmarks) {
+        //retarded way of accessing "Bookmarks Bar" array of children
+        const bookmarkTree = bookmarks[0].children[0].children;
+        this.bookmarks.length = 0;
+        this.bookmarks = bookmarkTree;
+        //console.log(bookmarkTree);
+    }
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new this();
+        }
+        return this.instance;
     }
 }
+
 
 /*
 Bookmark chrome api schema
@@ -22,38 +37,41 @@ Bookmark chrome api schema
 -url (if it isn not a folder)
 */
 
-
 export default class YabsApp extends React.Component {
     constructor() {
         super();
-        this.bookmarkStore = new BookmarkStore();
-        //DONT FORGET TO DO .bind(this) ITS VERY IMPORTANT IN ES6 LOL :killme:
-        chrome.bookmarks.getTree(this.setupBookmarks.bind(this));
-        this.bookmarkTree = [];
+        this.store = new BookmarkStore();
+        this.store.load();
         //console.log(chrome.bookmarks);
-    }
-    setupBookmarks(bookmarks) {
-        //retarded way of accessing "Bookmarks Bar" array of children
-        const bookmarkTree = bookmarks[0].children[0].children;
-        this.bookmarkStore.setBookmarks(bookmarkTree);
-        // console.log(this.bookmarkStore);
     }
     render() {
         // console.log(this.bookmarkTree);
         return (
             <div>
-                <BookmarkList bookmarkStore={this.bookmarkStore} />
+            <ListView store={this.store} />
             </div>
         );
     }
 }
 
-@observer class BookmarkList extends React.Component {
+@observer class ListView extends React.Component {
     static propTypes = {
-        bookmarkStore: React.PropTypes.any
+        store: React.PropTypes.any
+    }
+    dragStart(e) {
+        this.dragged = e.currentTarget;
+        e.dataTransfer.effectAllowed = 'move';
+
+        // Firefox requires calling dataTransfer.setData
+        // for the drag to properly work
+        e.dataTransfer.setData('text/html', e.currentTarget);
+        console.log('asdf');
+    }
+    dragEnd() {
+
     }
     render() {
-        const bookmarks = this.props.bookmarkStore.bookmarks;
+        const bookmarks = this.props.store.bookmarks;
         const topLevel = [];
         const folders = [];
         bookmarks.forEach((value) => {
@@ -63,22 +81,30 @@ export default class YabsApp extends React.Component {
                 folders.push(value);
             }
         });
-        console.log(topLevel);
         this.topLevelLinks = topLevel.map((bookmark, i) => {
             return <Bookmark bookmark={bookmark} key={bookmark.id}/>;
         });
         this.folderLinks = folders.map((folder) => {
-            const children = folder.children.map((child) => {
-                return <Bookmark bookmark={child} key={child.id}/>;
+            const children = folder.children.map((child, i) => {
+                return <Bookmark
+                    bookmark={child}
+                    key={child.id}
+                    store={this.props.store}
+                    id={child.id}
+                    data-id={i}
+                    draggable="true"
+                    onDragEnd={this.dragEnd}
+                    onDragStart={this.dragStart.bind(this)}
+                />;
             });
             return (
-                <BookmarkGroup children={children} key={folder.id} folder={folder}/>
+                <BookmarkGroup children={children} key={folder.id} folder={folder} store={this.props.store}/>
             );
         });
         return (
             <div className="bookmarkList">
-                {this.topLevelLinks}
-                {this.folderLinks}
+            {this.topLevelLinks}
+            {this.folderLinks}
             </div>
         );
     }
@@ -86,22 +112,45 @@ export default class YabsApp extends React.Component {
 @observer class BookmarkGroup extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { collapsed: false };
+        const state = Boolean(localStorage.getItem(this.props.folder.id));
+        this.state = { collapsed: state };
     }
     static propTypes = {
         children: React.PropTypes.any,
-        folder: React.PropTypes.any
+        folder: React.PropTypes.any,
+        store: React.PropTypes.any
     }
-    onClick() {
-        this.setState({ 'collapsed': !this.state.collapsed });
+    expand() {
+        this.setState({ collapsed: !this.state.collapsed }, () => {
+            localStorage.setItem(this.props.folder.id, this.state.collapsed);
+        });
+    }
+    addBookmark() {
+        const id = this.props.folder.id;
+        chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+            const url = tabs[0].url;
+            const bookmark = {
+                parentId: id,
+                index: 0,
+                title: url,
+                url: url
+            };
+            chrome.bookmarks.create(bookmark);
+            this.props.store.load();
+        });
     }
     render() {
         return (
             <div className="bookmarkGroup">
-                <div className="header" onClick={this.onClick.bind(this)}>{this.props.folder.title}</div>
-                <Collapse isOpened={this.state.collapsed}>
-                    {this.props.children}
-                </Collapse>
+            <div className="header">
+            <div className="title" onClick={this.expand.bind(this)}>
+            {this.props.folder.title}
+            </div>
+            <i className="fa fa-plus" onClick={this.addBookmark.bind(this)}/>
+            </div>
+            <Collapse isOpened={this.state.collapsed}>
+            {this.props.children}
+            </Collapse>
             </div>
         );
     }
@@ -109,27 +158,89 @@ export default class YabsApp extends React.Component {
 
 class Bookmark extends React.Component {
     static propTypes = {
-        bookmark: React.PropTypes.any
+        bookmark: React.PropTypes.any,
+        id: React.PropTypes.any,
+        store: React.PropTypes.any
+    }
+    constructor(props) {
+        super(props);
+        const bookmark = this.props.bookmark;
+        this.state = { renaming: false };
+
+        //title and URL
+        this.imageURL = `chrome://favicon/${ bookmark.url }`;
+        this.title = bookmark.title;
+        if (bookmark.title === bookmark.url) {
+            this.title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
+        }
+
+        //dates
+        this.monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        this.date = new Date(bookmark.dateAdded);
+        this.day = this.date.getDate();
+        this.month = this.monthNames[this.date.getMonth()];
+        this.year = this.date.getFullYear();
+
+        this.id = props.id;
+        this.store = props.store;
+
+        this.refreshContents();
+    }
+    refreshContents() {
+        if (this.state.renaming) {
+            this.content =
+            <input
+                className="title"
+                placeholder={this.props.bookmark.title}
+                onChange={this.onChange.bind(this)}
+                onKeyPress={this.handleKeyPress.bind(this)}
+                ref={this.setInputField.bind(this)}
+            ></input>;
+        } else {
+            this.content =
+            <a href={this.props.bookmark.url} target="_blank">
+                <div className="title">{this.title}</div>
+                <div className="date">{`${ this.day }, ${ this.month }`}</div>
+            </a>;
+        }
+    }
+    removeBookmark() {
+        chrome.bookmarks.remove(this.props.id, () => {
+            this.props.store.load();
+        });
+    }
+    handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            const val = this.nameField.value;
+            const changes = {
+                title: val
+            };
+            if (val.length > 0) {
+                chrome.bookmarks.update(this.props.id, changes, () => {
+                    this.props.store.load();
+                });
+            }
+        }
+    }
+    setInputField(field) {
+        this.nameField = field;
+    }
+    renameBookmark() {
+        this.setState({ renaming: !this.state.renaming }, () => {
+            this.refreshContents();
+        });
+    }
+    onChange() {
     }
     render() {
         const bookmark = this.props.bookmark;
-        const imageURL = `chrome://favicon/${ bookmark.url }`;
-        let title = bookmark.title;
-        if (bookmark.title === bookmark.url) {
-            title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
-        }
-        const monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const date = new Date(bookmark.dateAdded);
-        const day = date.getDate();
-        const month = monthNames[date.getMonth()];
-        const year = date.getFullYear();
-
         return (
-            <a className="bookmark" href={bookmark.title} target="_blank">
-                <img src={imageURL} />
-                <div className="title">{title}</div>
-                <div className="date">{`${ day }, ${ month }`}</div>
-            </a>
+            <div className="bookmark">
+                <img src={this.imageURL} />
+                {this.content}
+                <i className="fa fa-remove" onClick={this.removeBookmark.bind(this)}/>
+                <i className="fa fa-pencil" onClick={this.renameBookmark.bind(this)}/>
+            </div>
         );
     }
 }

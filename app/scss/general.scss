@@ -2,6 +2,8 @@ html {
   box-sizing: border-box;
   width: 100%;
   background: rgb(240, 240, 240);
+  width: 360px;
+  height: 550px;
 }
 body {
     padding: 0;
@@ -11,51 +13,128 @@ body {
   box-sizing: inherit;
 }
 #app {
-    width: 250px;
-    height: 550px;
+    width:100%;
 }
 .header {
     font-size: 13px;
     color: #666;
     font-weight: bold;
     text-align: center;
-    padding:.5em;
     text-transform: lowercase;
     overflow: auto;
     margin: 0 auto;
-    background: linear-gradient(rgb(220, 220, 220), rgb(240, 240, 240));
+    background: linear-gradient(rgb(230, 230, 230), rgb(240, 240, 240));
+    border-bottom: 1px solid #e2e2e2;
     width: 100%;
     cursor: pointer;
+    .title{
+        width: 60%;
+        float: left;
+        border-right: 1px solid #cecece;
+        padding:.5em;
+        height: 29px;
+        &:hover{
+            background: rgb(230, 230, 230);
+        }
+    }
+    .fa {
+        width: 40%;
+        border-left: 1px solid #eaeaea;
+        border-right: 1px solid #cecece;
+        padding:.5em;
+        height: 29px;
+        &:hover{
+            background: rgb(230, 230, 230);
+        }
+    }
 }
+
 .bookmarkList {
+
     .bookmark {
+        @extend .ScootIn;
+
         text-decoration: none;
         font-size: 12px;
         display: inline-block;
-        padding: .5em;
         width: 100%;
-        overflow: hidden;
         white-space: nowrap;
+        height:32px;
         img {
             width: 16px;
             float: left;
+            margin: 7px;
             margin-right: 1em;
+            transition: .1s all;
         }
-        .title {
-            float: left;
-            overflow:hidden;
-            width: 65%;
-            color: #555;
+        input {
+            /*
+            padding: 5px;
+            margin-top: 4px;
+            background: #fbfafa;
+            border: 1px solid #cecece;
+            border-radius: 2px;
+            width: 70%;
+            */
+
+            padding: 5px;
+            margin-top: 3px;
+            background: #fbfafa;
+            border: 1px solid #cecece;
+            border-radius: 2px;
+            width: 70%;
+            position: relative;
+            left: -6px;
+            font-size: 12px;
+            padding-top: 4px;
         }
-        .date{
-            font-size: 10px;
-            color: #777;
-            float:right;
-            width:20%;
-            text-align: right;
+        a{
+            line-height: 30px;
+            width: 70%;
+            height:29px;
+            display: inline-block;
+            .title {
+                float: left;
+                overflow:hidden;
+                width: 65%;
+                color: #555;
+                transition: .1s all;
+
+            }
+            .date{
+                font-size: 10px;
+                color: #777;
+                float:left;
+                width:20%;
+                text-align: right;
+
+            }
+        }
+
+        .fa {
+            color: #666;
+            padding: 10px;
+            width: 9%;
+            float: right;
+            border-left:1px solid rgb(204, 204, 204);
+            &:hover{
+                background:rgba(0,0,0,.1);
+            }
+            cursor: pointer;
         }
         &:hover {
-            background: rgba(0,0,0,.1);
+            background: #fbfafa;
+            /*
+            a .title{
+                font-size: 14px;
+                font-weight: bold;
+            }
+            a img{
+                position: relative;
+                transform: scale(2);
+            }
+            */
+
         }
     }
 }

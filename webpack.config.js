@@ -6,7 +6,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            app: `${ __dirname }/app/`
+            app: `${ __dirname }/app/`,
+            fa: 'font-awesome/scss/font-awesome.scss'
         },
         extensions: ['', '.js', '.jsx', '.scss']
     },
@@ -49,7 +50,12 @@ module.exports = {
             {
                 test: /\.scss$/,
                 loader: "style!css!sass!"
-            }
+            },
+          {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader?mimetype=image/svg+xml'},
+          {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/font-woff"},
+          {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/font-woff"},
+          {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/octet-stream"},
+          {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader"}
         ]
     },
 };
