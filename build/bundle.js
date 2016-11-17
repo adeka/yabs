@@ -21601,7 +21601,7 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _class, _class2, _temp, _class3, _class4, _temp2;
+	var _class, _class2, _temp;
 
 	var _react = __webpack_require__(1);
 
@@ -21621,13 +21621,13 @@
 
 	__webpack_require__(196);
 
+	var _BookmarkGroup = __webpack_require__(212);
+
+	var _BookmarkGroup2 = _interopRequireDefault(_BookmarkGroup);
+
 	var _BookmarkRow = __webpack_require__(211);
 
 	var _BookmarkRow2 = _interopRequireDefault(_BookmarkRow);
-
-	var _Bookmark2 = __webpack_require__(206);
-
-	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21674,12 +21674,11 @@
 	                        'data-id': i
 	                    });
 	                });
-	                return _react2.default.createElement(BookmarkGroup, { children: children, key: bookmark.id, bookmark: bookmark, store: _this2.props.store, id: bookmark.id });
+	                return _react2.default.createElement(_BookmarkGroup2.default, { children: children, key: bookmark.id, bookmark: bookmark, store: _this2.props.store, id: bookmark.id });
 	            });
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'bookmarkList' },
-	                this.topLevelLinks,
 	                this.folderLinks
 	            );
 	        }
@@ -21691,101 +21690,6 @@
 	}, _temp)) || _class;
 
 	exports.default = ListView;
-
-	var BookmarkGroup = (0, _mobxReact.observer)(_class3 = (_temp2 = _class4 = function (_Bookmark) {
-	    _inherits(BookmarkGroup, _Bookmark);
-
-	    function BookmarkGroup(props) {
-	        _classCallCheck(this, BookmarkGroup);
-
-	        var _this3 = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
-
-	        var state = JSON.parse(localStorage.getItem(_this3.props.bookmark.id));
-	        if (!state) {
-	            state = false;
-	        }
-	        _this3.state = { collapsed: state };
-	        return _this3;
-	    }
-
-	    _createClass(BookmarkGroup, [{
-	        key: 'expand',
-	        value: function expand() {
-	            var _this4 = this;
-
-	            if (!this.renaming) {
-	                this.setState({ collapsed: !this.state.collapsed }, function () {
-	                    localStorage.setItem(_this4.props.bookmark.id, _this4.state.collapsed);
-	                });
-	            }
-	        }
-	    }, {
-	        key: 'addBookmark',
-	        value: function addBookmark() {
-	            var _this5 = this;
-
-	            var id = this.props.bookmark.id;
-	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
-	                var url = tabs[0].url;
-	                var bookmark = {
-	                    parentId: id,
-	                    index: 0,
-	                    title: url,
-	                    url: url
-	                };
-	                chrome.bookmarks.create(bookmark);
-	                if (!_this5.state.collapsed) {
-	                    _this5.expand();
-	                }
-	                _this5.props.store.load();
-	            });
-	        }
-	    }, {
-	        key: 'removeFolder',
-	        value: function removeFolder() {
-	            var _this6 = this;
-
-	            var id = this.props.bookmark.id;
-	            if (this.props.bookmark.children.length === 0) {
-	                chrome.bookmarks.remove(id, function () {
-	                    _this6.props.store.load();
-	                });
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'bookmarkGroup' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'header' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { onClick: this.expand.bind(this) },
-	                        this.store.content
-	                    ),
-	                    _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) }),
-	                    _react2.default.createElement('i', { className: 'fa fa-pencil', onClick: this.rename.bind(this) }),
-	                    _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeFolder.bind(this) })
-	                ),
-	                _react2.default.createElement(
-	                    _reactCollapse2.default,
-	                    { isOpened: this.state.collapsed },
-	                    this.props.children
-	                )
-	            );
-	        }
-	    }]);
-
-	    return BookmarkGroup;
-	}(_Bookmark3.default), _class4.propTypes = {
-	    children: _react2.default.PropTypes.any,
-	    bookmark: _react2.default.PropTypes.any,
-	    store: _react2.default.PropTypes.any,
-	    id: _react2.default.PropTypes.any
-	}, _temp2)) || _class3;
 
 /***/ },
 /* 174 */
@@ -28415,6 +28319,152 @@
 	}, _temp)) || _class;
 
 	exports.default = BookmarkRow;
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _class, _class2, _temp;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactCollapse = __webpack_require__(174);
+
+	var _reactCollapse2 = _interopRequireDefault(_reactCollapse);
+
+	var _mobxReact = __webpack_require__(194);
+
+	var _mobx = __webpack_require__(195);
+
+	__webpack_require__(196);
+
+	var _BookmarkRow = __webpack_require__(211);
+
+	var _BookmarkRow2 = _interopRequireDefault(_BookmarkRow);
+
+	var _Bookmark2 = __webpack_require__(206);
+
+	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var BookmarkGroup = (0, _mobxReact.observer)(_class = (_temp = _class2 = function (_Bookmark) {
+	    _inherits(BookmarkGroup, _Bookmark);
+
+	    function BookmarkGroup(props) {
+	        _classCallCheck(this, BookmarkGroup);
+
+	        var _this = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
+
+	        var state = JSON.parse(localStorage.getItem(_this.props.bookmark.id));
+	        if (!state) {
+	            state = false;
+	        }
+	        _this.state = { collapsed: state };
+	        return _this;
+	    }
+
+	    _createClass(BookmarkGroup, [{
+	        key: 'expand',
+	        value: function expand() {
+	            var _this2 = this;
+
+	            if (!this.renaming) {
+	                this.setState({ collapsed: !this.state.collapsed }, function () {
+	                    localStorage.setItem(_this2.props.bookmark.id, _this2.state.collapsed);
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'addBookmark',
+	        value: function addBookmark() {
+	            var _this3 = this;
+
+	            var id = this.props.bookmark.id;
+	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+	                var url = tabs[0].url;
+	                var bookmark = {
+	                    parentId: id,
+	                    index: 0,
+	                    title: url,
+	                    url: url
+	                };
+	                chrome.bookmarks.create(bookmark);
+	                if (!_this3.state.collapsed) {
+	                    _this3.expand();
+	                }
+	                _this3.props.store.load();
+	            });
+	        }
+	    }, {
+	        key: 'removeFolder',
+	        value: function removeFolder() {
+	            var _this4 = this;
+
+	            var id = this.props.bookmark.id;
+	            if (this.props.bookmark.children.length === 0) {
+	                chrome.bookmarks.remove(id, function () {
+	                    _this4.props.store.load();
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmarkGroup' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'header' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { onClick: this.expand.bind(this) },
+	                        this.store.content
+	                    ),
+	                    _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) }),
+	                    _react2.default.createElement('i', { className: 'fa fa-pencil', onClick: this.rename.bind(this) }),
+	                    _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeFolder.bind(this) })
+	                ),
+	                _react2.default.createElement(
+	                    _reactCollapse2.default,
+	                    { isOpened: this.state.collapsed },
+	                    this.props.children
+	                )
+	            );
+	        }
+	    }]);
+
+	    return BookmarkGroup;
+	}(_Bookmark3.default), _class2.propTypes = {
+	    children: _react2.default.PropTypes.any,
+	    bookmark: _react2.default.PropTypes.any,
+	    store: _react2.default.PropTypes.any,
+	    id: _react2.default.PropTypes.any
+	}, _temp)) || _class;
+
+	exports.default = BookmarkGroup;
 
 /***/ }
 /******/ ]);
