@@ -15,75 +15,102 @@ body {
 }
 *, *:before, *:after {
   box-sizing: inherit;
+  outline: none;
+
 }
 #app {
     width:100%;
 }
-.header {
-    font-size: 13px;
-    color: #666;
-    font-weight: bold;
-    text-align: center;
-    text-transform: lowercase;
-    overflow: auto;
-    margin: 0 auto;
-    background: linear-gradient(rgb(230, 230, 230), rgb(240, 240, 240));
-    border-bottom: 1px solid #e2e2e2;
-    width: 100%;
-    cursor: pointer;
-    .title{
-        width: 60%;
-        float: left;
-        border-right: 1px solid #cecece;
-        padding:.5em;
-        height: 29px;
-        &:hover{
-            background: rgb(230, 230, 230);
+.bookmarkGroup {
+    @extend .ScootIn;
+
+    .header {
+        font-size: 13px;
+        color: #666;
+        font-weight: bold;
+        text-align: center;
+        overflow: auto;
+        margin: 0 auto;
+        background: linear-gradient(rgb(240, 240, 240), rgb(235, 235, 235));
+        border-bottom: 1px solid #e2e2e2;
+        width: 100%;
+        cursor: pointer;
+        .title{
+            width: 60%;
+            float: left;
+            border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            &:hover{
+                background: rgb(230, 230, 230);
+            }
+        }
+        input{
+            padding: 5px;
+            background: white;
+            border: 1px solid #cecece;
+            border-radius: 2px;
+            position: relative;
+            font-size: 12px;
+            padding-top: 4px;
+            border-bottom: none;
+        }
+        .fa-plus {
+            width: 20%;
+            border-left: 1px solid #eaeaea;
+            border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            &:hover{
+                background: rgb(230, 230, 230);
+            }
+        }
+        .fa-remove {
+            width: 10%;
+            border-left: 1px solid #eaeaea;
+            border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            &:hover{
+                background: rgb(230, 230, 230);
+            }
+        }
+        .fa-pencil {
+            width: 10%;
+            border-left: 1px solid #eaeaea;
+            border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            &:hover{
+                background: rgb(230, 230, 230);
+            }
         }
     }
-    .fa {
-        width: 40%;
-        border-left: 1px solid #eaeaea;
-        border-right: 1px solid #cecece;
-        padding:.5em;
-        height: 29px;
-        &:hover{
-            background: rgb(230, 230, 230);
-        }
-    }
+
 }
 
 .bookmarkList {
-
     .bookmark {
         @extend .ScootIn;
-
         text-decoration: none;
         font-size: 12px;
         display: inline-block;
         width: 100%;
         white-space: nowrap;
         height:32px;
+        background: #f8f8f8;
         img {
             width: 16px;
             float: left;
             margin: 7px;
             margin-right: 1em;
             transition: .1s all;
+
         }
         input {
-            /*
-            padding: 5px;
-            margin-top: 4px;
-            background: #fbfafa;
-            border: 1px solid #cecece;
-            border-radius: 2px;
-            width: 70%;
-            */
-
             padding: 5px;
             margin-top: 3px;
-            background: #fbfafa;
+            background: white;
             border: 1px solid #cecece;
             border-radius: 2px;
             width: 70%;
@@ -108,14 +135,34 @@ body {
             .date{
                 font-size: 10px;
                 color: #777;
-                float:left;
+                float:right;
                 width:20%;
                 text-align: right;
 
             }
         }
 
-        .fa {
+        .star {
+            display: none;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            .star-front {
+                position: absolute;
+                left: 2px;
+                top: 2px;
+                font-size: 15px;
+                color: rgb(255, 184, 0);
+            }
+            .star-back {
+                position: absolute;
+                left: 3px;
+                top: 3px;
+                font-size: 16px;
+                color: rgb(82, 34, 0);
+            }
+        }
+        .edit, .delete {
             color: #666;
             padding: 10px;
             width: 9%;
@@ -130,7 +177,8 @@ body {
             cursor: pointer;
         }
         &:hover {
-            background: #fbfafa;
+            background: white;
+            border-bottom: 1px solid rgb(240, 240, 240);
             /*
             a .title{
                 font-size: 14px;
@@ -143,6 +191,65 @@ body {
             */
 
         }
+    }
+}
+
+.toolbar{
+    overflow: auto;
+    background: linear-gradient(white, #fbfafa);
+    height: 45px;
+    padding-top: 5px;
+    .addFolder{
+        width: 50px;
+        height: 34px;
+        padding-top: 6px;
+        padding-left: 6px;
+        float: left;
+
+        .fa-folder-open{
+            font-size: 20px;
+            color: #AAA;
+        }
+        .fa-plus{
+            font-size: 12px;
+            color: #AAA;
+            position: relative;
+            left: -5px;
+            top: -4px;
+            padding-left: 4px;
+        }
+        &:hover{
+            .fa-plus, .fa-folder-open{
+                color: #555;
+            }
+
+            //background: rgb(235, 236, 236);
+        }
+    }
+
+    .searchBar {
+        float: left;
+        padding: 5px;
+        margin-top: 3px;
+        background: white;
+        border: 1px solid #cecece;
+        border-radius: 3px;
+        width: 75%;
+        position: relative;
+        font-size: 12px;
+        padding-top: 4px;
+        margin-left: 3px;
+        margin-right: 3px;
+    }
+
+    .search{
+        width: 34px;
+        height: 34px;
+        padding-top: 4px;
+        padding-left: 6px;
+        float: right;
+        font-size: 20px;
+        color: #777;
     }
 }
 
