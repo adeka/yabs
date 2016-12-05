@@ -60,7 +60,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	__webpack_require__(209);
+	__webpack_require__(210);
 
 	_reactDom2.default.render(_react2.default.createElement(_YabsApp2.default, null), document.getElementById('app'));
 
@@ -21444,7 +21444,7 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _desc, _value, _class, _descriptor;
+	var _desc, _value, _class, _descriptor, _descriptor2;
 
 	var _react = __webpack_require__(1);
 
@@ -21458,7 +21458,7 @@
 
 	var _ListView2 = _interopRequireDefault(_ListView);
 
-	var _Toolbar = __webpack_require__(208);
+	var _Toolbar = __webpack_require__(209);
 
 	var _Toolbar2 = _interopRequireDefault(_Toolbar);
 
@@ -21525,9 +21525,16 @@
 	        _classCallCheck(this, BookmarkListStore);
 
 	        _initDefineProp(this, 'bookmarks', _descriptor, this);
+
+	        _initDefineProp(this, 'pointerState', _descriptor2, this);
 	    }
 
 	    _createClass(BookmarkListStore, [{
+	        key: 'setPointerState',
+	        value: function setPointerState(state) {
+	            this.pointerState = state;
+	        }
+	    }, {
 	        key: 'load',
 	        value: function load() {
 	            chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
@@ -21538,7 +21545,6 @@
 	            //retarded way of accessing "Bookmarks Bar" array of children
 	            var bookmarkTree = bookmarks[0].children[0].children;
 	            this.bookmarks = bookmarkTree;
-	            console.log(bookmarks);
 	        }
 	    }], [{
 	        key: 'getInstance',
@@ -21556,7 +21562,12 @@
 	    initializer: function initializer() {
 	        return [];
 	    }
-	})), _class);
+	}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'pointerState', [_mobx.observable], {
+	    enumerable: true,
+	    initializer: function initializer() {
+	        return 'interior';
+	    }
+	}), _applyDecoratedDescriptor(_class.prototype, 'setPointerState', [_mobx.action], Object.getOwnPropertyDescriptor(_class.prototype, 'setPointerState'), _class.prototype)), _class);
 
 	var YabsApp = function (_React$Component) {
 	    _inherits(YabsApp, _React$Component);
@@ -21621,11 +21632,11 @@
 
 	__webpack_require__(196);
 
-	var _BookmarkGroup = __webpack_require__(212);
+	var _BookmarkGroup = __webpack_require__(206);
 
 	var _BookmarkGroup2 = _interopRequireDefault(_BookmarkGroup);
 
-	var _BookmarkRow = __webpack_require__(211);
+	var _BookmarkRow = __webpack_require__(207);
 
 	var _BookmarkRow2 = _interopRequireDefault(_BookmarkRow);
 
@@ -21643,13 +21654,86 @@
 	    function ListView() {
 	        _classCallCheck(this, ListView);
 
-	        return _possibleConstructorReturn(this, (ListView.__proto__ || Object.getPrototypeOf(ListView)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (ListView.__proto__ || Object.getPrototypeOf(ListView)).call(this));
+
+	        _this.placeholder = document.createElement('div');
+	        _this.placeholder.className = 'placeholder';
+	        return _this;
 	    }
 
 	    _createClass(ListView, [{
+	        key: 'dragStart',
+	        value: function dragStart(e, index, id) {
+	            this.fromIndex = index;
+	            this.fromID = id;
+
+	            this.placeholder.style.display = 'inline-block';
+
+	            this.dragged = e.currentTarget;
+	            e.dataTransfer.effectAllowed = 'move';
+
+	            this.props.store.setPointerState('interior disabled');
+	        }
+	    }, {
+	        key: 'dragEnd',
+	        value: function dragEnd(e) {
+	            var _this2 = this;
+
+	            var from = Number(this.fromIndex);
+	            var to = Number(this.overID);
+	            if (this.nodePlacement === 'after') {
+	                to++;
+	            }
+
+	            var data = this.props.store.bookmarks;
+	            data.splice(to, 0, data.splice(from, 1)[0]);
+	            this.props.store.bookmarks = data;
+
+	            chrome.bookmarks.move(this.fromID, { index: to }, function () {
+	                _this2.props.store.load();
+	                _this2.over.parentNode.removeChild(_this2.placeholder);
+	                _this2.dragged.style.display = 'block';
+	            });
+
+	            this.props.store.setPointerState('interior');
+	        }
+	    }, {
+	        key: 'dragOver',
+	        value: function dragOver(e, id) {
+	            e.preventDefault();
+
+	            // if (e.target.className === 'placeholder' ||
+	            //     e.target.className === 'fa-folder' ||
+	            //     e.target.className === 'wrap' ||
+	            //     e.target.className === 'title'
+	            // ) {
+	            //     return;
+	            // }
+	            console.log(e.target.className);
+
+	            if (e.target.className !== 'placeholder') {
+	                this.over = e.target;
+	                var relY = e.clientY - this.over.offsetTop;
+	                var height = this.over.offsetHeight / 2;
+	                var parent = e.target.parentNode;
+
+	                this.dragged.style.display = 'none';
+	                this.overID = id;
+
+	                // if (relY > height) {
+	                //     this.nodePlacement = 'after';
+	                //     parent.insertBefore(this.placeholder, e.target.nextElementSibling);
+	                // } else if (relY < height) {
+	                //     this.nodePlacement = 'before';
+	                //     parent.insertBefore(this.placeholder, e.target);
+	                // }
+	                parent.insertBefore(this.placeholder, e.target);
+	            }
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            var bookmarks = this.props.store.bookmarks;
 	            var topLevel = [];
@@ -21669,12 +21753,21 @@
 	                    return _react2.default.createElement(_BookmarkRow2.default, {
 	                        bookmark: child,
 	                        key: child.id,
-	                        store: _this2.props.store,
-	                        id: child.id,
-	                        'data-id': i
+	                        store: _this3.props.store,
+	                        id: child.id
 	                    });
 	                });
-	                return _react2.default.createElement(_BookmarkGroup2.default, { children: children, key: bookmark.id, bookmark: bookmark, store: _this2.props.store, id: bookmark.id });
+	                return _react2.default.createElement(_BookmarkGroup2.default, {
+	                    children: children,
+	                    key: bookmark.id,
+	                    bookmark: bookmark,
+	                    store: _this3.props.store,
+	                    id: bookmark.id,
+	                    dragStart: _this3.dragStart.bind(_this3),
+	                    dragEnd: _this3.dragEnd.bind(_this3),
+	                    dragOver: _this3.dragOver.bind(_this3),
+	                    index: bookmark.index
+	                });
 	            });
 	            return _react2.default.createElement(
 	                'div',
@@ -27880,6 +27973,328 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _class, _class2, _temp;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactCollapse = __webpack_require__(174);
+
+	var _reactCollapse2 = _interopRequireDefault(_reactCollapse);
+
+	var _mobxReact = __webpack_require__(194);
+
+	var _mobx = __webpack_require__(195);
+
+	__webpack_require__(196);
+
+	var _BookmarkRow = __webpack_require__(207);
+
+	var _BookmarkRow2 = _interopRequireDefault(_BookmarkRow);
+
+	var _Bookmark2 = __webpack_require__(208);
+
+	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
+
+	var _ColorPicker = __webpack_require__(212);
+
+	var _ColorPicker2 = _interopRequireDefault(_ColorPicker);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var BookmarkGroup = (0, _mobxReact.observer)(_class = (_temp = _class2 = function (_Bookmark) {
+	    _inherits(BookmarkGroup, _Bookmark);
+
+	    function BookmarkGroup(props) {
+	        _classCallCheck(this, BookmarkGroup);
+
+	        var _this = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
+
+	        var state = JSON.parse(localStorage.getItem(_this.props.bookmark.id));
+	        if (!state) {
+	            state = false;
+	        }
+	        _this.state = { collapsed: state, showColors: false };
+
+	        chrome.storage.sync.get(props.id, function (obj) {
+	            var bookmark = obj[props.id];
+	            if (bookmark && bookmark.color) {
+	                _this.setState({ style: 'fa fa-folder ' + bookmark.color });
+	            } else {
+	                _this.setState({ style: 'fa fa-folder white' });
+	            }
+	        });
+	        return _this;
+	    }
+
+	    _createClass(BookmarkGroup, [{
+	        key: 'expand',
+	        value: function expand() {
+	            var _this2 = this;
+
+	            if (!this.renaming) {
+	                this.setState({ collapsed: !this.state.collapsed }, function () {
+	                    localStorage.setItem(_this2.props.bookmark.id, _this2.state.collapsed);
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'addBookmark',
+	        value: function addBookmark() {
+	            var _this3 = this;
+
+	            var id = this.props.bookmark.id;
+	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+	                var url = tabs[0].url;
+	                var bookmark = {
+	                    parentId: id,
+	                    index: 0,
+	                    title: url,
+	                    url: url
+	                };
+	                chrome.bookmarks.create(bookmark);
+	                if (!_this3.state.collapsed) {
+	                    _this3.expand();
+	                }
+	                _this3.props.store.load();
+	            });
+	        }
+	    }, {
+	        key: 'removeFolder',
+	        value: function removeFolder() {
+	            var _this4 = this;
+
+	            var id = this.props.bookmark.id;
+	            if (this.props.bookmark.children.length === 0) {
+	                chrome.bookmarks.remove(id, function () {
+	                    _this4.props.store.load();
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'showColors',
+	        value: function showColors() {
+	            this.setState({ showColors: !this.state.showColors });
+	        }
+	    }, {
+	        key: 'setColor',
+	        value: function setColor(color) {
+	            this.setState({ style: 'fa fa-folder ' + color });
+	            var updateBookmark = {};
+	            updateBookmark[this.props.id] = { 'color': color };
+	            chrome.storage.sync.set(updateBookmark);
+	            this.showColors();
+	        }
+	    }, {
+	        key: 'dragStart',
+	        value: function dragStart(e) {
+	            this.props.dragStart(e, this.props.index, this.props.id);
+	        }
+	    }, {
+	        key: 'dragOver',
+	        value: function dragOver(e) {
+	            this.props.dragOver(e, this.props.index);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmarkGroup white',
+	                    draggable: 'true',
+	                    onDragStart: this.dragStart.bind(this),
+	                    onDragEnd: this.props.dragEnd,
+	                    onDragOver: this.dragOver.bind(this) },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: this.props.store.pointerState },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'header' },
+	                        _react2.default.createElement('i', { className: this.state.style }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { onClick: this.expand.bind(this) },
+	                            this.store.content
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'wrap' },
+	                            _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) }),
+	                            _react2.default.createElement('i', { className: 'fa fa-pencil', onClick: this.rename.bind(this) }),
+	                            _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeFolder.bind(this) }),
+	                            _react2.default.createElement('i', { className: 'fa fa-paint-brush', onClick: this.showColors.bind(this) })
+	                        )
+	                    ),
+	                    _react2.default.createElement(_ColorPicker2.default, { collapsed: this.state.showColors, setColor: this.setColor.bind(this) }),
+	                    _react2.default.createElement(
+	                        _reactCollapse2.default,
+	                        { isOpened: this.state.collapsed },
+	                        this.props.children
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return BookmarkGroup;
+	}(_Bookmark3.default), _class2.propTypes = {
+	    children: _react2.default.PropTypes.any,
+	    bookmark: _react2.default.PropTypes.any,
+	    store: _react2.default.PropTypes.any,
+	    id: _react2.default.PropTypes.any,
+	    index: _react2.default.PropTypes.any
+	}, _temp)) || _class;
+
+	exports.default = BookmarkGroup;
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _class, _class2, _temp;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _mobxReact = __webpack_require__(194);
+
+	var _mobx = __webpack_require__(195);
+
+	__webpack_require__(196);
+
+	var _Bookmark2 = __webpack_require__(208);
+
+	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/*
+	Bookmark chrome api schema
+	-children (if it is a folder)
+	-dateAdded
+	-dateGroupModified
+	-id
+	-index
+	-parentID
+	-title
+	-url (if it isn not a folder)
+	*/
+
+	var BookmarkRow = (0, _mobxReact.observer)(_class = (_temp = _class2 = function (_Bookmark) {
+	    _inherits(BookmarkRow, _Bookmark);
+
+	    function BookmarkRow(props) {
+	        _classCallCheck(this, BookmarkRow);
+
+	        var _this = _possibleConstructorReturn(this, (BookmarkRow.__proto__ || Object.getPrototypeOf(BookmarkRow)).call(this, props));
+
+	        var bookmark = _this.props.bookmark;
+
+	        //title and URL
+	        _this.imageURL = 'chrome://favicon/' + bookmark.url;
+	        if (bookmark.title === bookmark.url) {
+	            _this.title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
+	        }
+
+	        //dates
+	        _this.monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+	        _this.date = new Date(bookmark.dateAdded);
+	        _this.day = _this.date.getDate();
+	        _this.month = _this.monthNames[_this.date.getMonth()];
+	        _this.year = _this.date.getFullYear();
+	        return _this;
+	    }
+
+	    _createClass(BookmarkRow, [{
+	        key: 'removeBookmark',
+	        value: function removeBookmark() {
+	            var _this2 = this;
+
+	            chrome.bookmarks.remove(this.props.id, function () {
+	                _this2.props.store.load();
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var bookmark = this.props.bookmark;
+	            var editStyle = 'fa fa-pencil edit';
+	            if (this.renaming) {
+	                editStyle = 'fa fa-pencil dark edit';
+	            } else {
+	                editStyle = 'fa fa-pencil edit';
+	            }
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'bookmark' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'star' },
+	                    _react2.default.createElement('i', { className: 'fa fa-star star-back' }),
+	                    _react2.default.createElement('i', { className: 'fa fa-star star-front' })
+	                ),
+	                _react2.default.createElement('img', { src: this.imageURL }),
+	                this.store.content,
+	                _react2.default.createElement('i', { className: 'fa fa-remove delete', onDoubleClick: this.removeBookmark.bind(this) }),
+	                _react2.default.createElement('i', { className: editStyle, onClick: this.rename.bind(this) })
+	            );
+	        }
+	    }]);
+
+	    return BookmarkRow;
+	}(_Bookmark3.default), _class2.propTypes = {
+	    bookmark: _react2.default.PropTypes.any,
+	    id: _react2.default.PropTypes.any,
+	    store: _react2.default.PropTypes.any
+	}, _temp)) || _class;
+
+	exports.default = BookmarkRow;
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _desc, _value, _class, _descriptor, _class3, _class4, _temp2;
 
 	var _react = __webpack_require__(1);
@@ -28069,8 +28484,7 @@
 	exports.default = Bookmark;
 
 /***/ },
-/* 207 */,
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28158,13 +28572,13 @@
 	exports.default = Toolbar;
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(210);
+	var content = __webpack_require__(211);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(205)(content, {});
@@ -28184,7 +28598,7 @@
 	}
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(198)();
@@ -28192,133 +28606,10 @@
 
 
 	// module
-	exports.push([module.id, "@-webkit-keyframes ScootInAnimation {\n  0% {\n    opacity: 0;\n    left: -500px; }\n  60% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    left: 0px; } }\n\n.ScootIn, .bookmarkGroup, .bookmarkList .bookmark {\n  position: relative;\n  opacity: 0;\n  animation: ScootInAnimation .3s forwards; }\n  .ScootIn:nth-child(1), .bookmarkGroup:nth-child(1), .bookmarkList .bookmark:nth-child(1) {\n    animation-delay: 0.01333s; }\n  .ScootIn:nth-child(2), .bookmarkGroup:nth-child(2), .bookmarkList .bookmark:nth-child(2) {\n    animation-delay: 0.02667s; }\n  .ScootIn:nth-child(3), .bookmarkGroup:nth-child(3), .bookmarkList .bookmark:nth-child(3) {\n    animation-delay: 0.04s; }\n  .ScootIn:nth-child(4), .bookmarkGroup:nth-child(4), .bookmarkList .bookmark:nth-child(4) {\n    animation-delay: 0.05333s; }\n  .ScootIn:nth-child(5), .bookmarkGroup:nth-child(5), .bookmarkList .bookmark:nth-child(5) {\n    animation-delay: 0.06667s; }\n  .ScootIn:nth-child(6), .bookmarkGroup:nth-child(6), .bookmarkList .bookmark:nth-child(6) {\n    animation-delay: 0.08s; }\n  .ScootIn:nth-child(7), .bookmarkGroup:nth-child(7), .bookmarkList .bookmark:nth-child(7) {\n    animation-delay: 0.09333s; }\n  .ScootIn:nth-child(8), .bookmarkGroup:nth-child(8), .bookmarkList .bookmark:nth-child(8) {\n    animation-delay: 0.10667s; }\n  .ScootIn:nth-child(9), .bookmarkGroup:nth-child(9), .bookmarkList .bookmark:nth-child(9) {\n    animation-delay: 0.12s; }\n  .ScootIn:nth-child(10), .bookmarkGroup:nth-child(10), .bookmarkList .bookmark:nth-child(10) {\n    animation-delay: 0.13333s; }\n  .ScootIn:nth-child(11), .bookmarkGroup:nth-child(11), .bookmarkList .bookmark:nth-child(11) {\n    animation-delay: 0.14667s; }\n  .ScootIn:nth-child(12), .bookmarkGroup:nth-child(12), .bookmarkList .bookmark:nth-child(12) {\n    animation-delay: 0.16s; }\n  .ScootIn:nth-child(13), .bookmarkGroup:nth-child(13), .bookmarkList .bookmark:nth-child(13) {\n    animation-delay: 0.17333s; }\n  .ScootIn:nth-child(14), .bookmarkGroup:nth-child(14), .bookmarkList .bookmark:nth-child(14) {\n    animation-delay: 0.18667s; }\n  .ScootIn:nth-child(15), .bookmarkGroup:nth-child(15), .bookmarkList .bookmark:nth-child(15) {\n    animation-delay: 0.2s; }\n  .ScootIn:nth-child(16), .bookmarkGroup:nth-child(16), .bookmarkList .bookmark:nth-child(16) {\n    animation-delay: 0.21333s; }\n  .ScootIn:nth-child(17), .bookmarkGroup:nth-child(17), .bookmarkList .bookmark:nth-child(17) {\n    animation-delay: 0.22667s; }\n  .ScootIn:nth-child(18), .bookmarkGroup:nth-child(18), .bookmarkList .bookmark:nth-child(18) {\n    animation-delay: 0.24s; }\n  .ScootIn:nth-child(19), .bookmarkGroup:nth-child(19), .bookmarkList .bookmark:nth-child(19) {\n    animation-delay: 0.25333s; }\n  .ScootIn:nth-child(20), .bookmarkGroup:nth-child(20), .bookmarkList .bookmark:nth-child(20) {\n    animation-delay: 0.26667s; }\n  .ScootIn:nth-child(21), .bookmarkGroup:nth-child(21), .bookmarkList .bookmark:nth-child(21) {\n    animation-delay: 0.28s; }\n  .ScootIn:nth-child(22), .bookmarkGroup:nth-child(22), .bookmarkList .bookmark:nth-child(22) {\n    animation-delay: 0.29333s; }\n  .ScootIn:nth-child(23), .bookmarkGroup:nth-child(23), .bookmarkList .bookmark:nth-child(23) {\n    animation-delay: 0.30667s; }\n  .ScootIn:nth-child(24), .bookmarkGroup:nth-child(24), .bookmarkList .bookmark:nth-child(24) {\n    animation-delay: 0.32s; }\n  .ScootIn:nth-child(25), .bookmarkGroup:nth-child(25), .bookmarkList .bookmark:nth-child(25) {\n    animation-delay: 0.33333s; }\n  .ScootIn:nth-child(26), .bookmarkGroup:nth-child(26), .bookmarkList .bookmark:nth-child(26) {\n    animation-delay: 0.34667s; }\n  .ScootIn:nth-child(27), .bookmarkGroup:nth-child(27), .bookmarkList .bookmark:nth-child(27) {\n    animation-delay: 0.36s; }\n  .ScootIn:nth-child(28), .bookmarkGroup:nth-child(28), .bookmarkList .bookmark:nth-child(28) {\n    animation-delay: 0.37333s; }\n  .ScootIn:nth-child(29), .bookmarkGroup:nth-child(29), .bookmarkList .bookmark:nth-child(29) {\n    animation-delay: 0.38667s; }\n  .ScootIn:nth-child(30), .bookmarkGroup:nth-child(30), .bookmarkList .bookmark:nth-child(30) {\n    animation-delay: 0.4s; }\n  .ScootIn:nth-child(31), .bookmarkGroup:nth-child(31), .bookmarkList .bookmark:nth-child(31) {\n    animation-delay: 0.41333s; }\n  .ScootIn:nth-child(32), .bookmarkGroup:nth-child(32), .bookmarkList .bookmark:nth-child(32) {\n    animation-delay: 0.42667s; }\n  .ScootIn:nth-child(33), .bookmarkGroup:nth-child(33), .bookmarkList .bookmark:nth-child(33) {\n    animation-delay: 0.44s; }\n  .ScootIn:nth-child(34), .bookmarkGroup:nth-child(34), .bookmarkList .bookmark:nth-child(34) {\n    animation-delay: 0.45333s; }\n  .ScootIn:nth-child(35), .bookmarkGroup:nth-child(35), .bookmarkList .bookmark:nth-child(35) {\n    animation-delay: 0.46667s; }\n  .ScootIn:nth-child(36), .bookmarkGroup:nth-child(36), .bookmarkList .bookmark:nth-child(36) {\n    animation-delay: 0.48s; }\n  .ScootIn:nth-child(37), .bookmarkGroup:nth-child(37), .bookmarkList .bookmark:nth-child(37) {\n    animation-delay: 0.49333s; }\n  .ScootIn:nth-child(38), .bookmarkGroup:nth-child(38), .bookmarkList .bookmark:nth-child(38) {\n    animation-delay: 0.50667s; }\n  .ScootIn:nth-child(39), .bookmarkGroup:nth-child(39), .bookmarkList .bookmark:nth-child(39) {\n    animation-delay: 0.52s; }\n  .ScootIn:nth-child(40), .bookmarkGroup:nth-child(40), .bookmarkList .bookmark:nth-child(40) {\n    animation-delay: 0.53333s; }\n  .ScootIn:nth-child(41), .bookmarkGroup:nth-child(41), .bookmarkList .bookmark:nth-child(41) {\n    animation-delay: 0.54667s; }\n  .ScootIn:nth-child(42), .bookmarkGroup:nth-child(42), .bookmarkList .bookmark:nth-child(42) {\n    animation-delay: 0.56s; }\n  .ScootIn:nth-child(43), .bookmarkGroup:nth-child(43), .bookmarkList .bookmark:nth-child(43) {\n    animation-delay: 0.57333s; }\n  .ScootIn:nth-child(44), .bookmarkGroup:nth-child(44), .bookmarkList .bookmark:nth-child(44) {\n    animation-delay: 0.58667s; }\n  .ScootIn:nth-child(45), .bookmarkGroup:nth-child(45), .bookmarkList .bookmark:nth-child(45) {\n    animation-delay: 0.6s; }\n  .ScootIn:nth-child(46), .bookmarkGroup:nth-child(46), .bookmarkList .bookmark:nth-child(46) {\n    animation-delay: 0.61333s; }\n  .ScootIn:nth-child(47), .bookmarkGroup:nth-child(47), .bookmarkList .bookmark:nth-child(47) {\n    animation-delay: 0.62667s; }\n  .ScootIn:nth-child(48), .bookmarkGroup:nth-child(48), .bookmarkList .bookmark:nth-child(48) {\n    animation-delay: 0.64s; }\n  .ScootIn:nth-child(49), .bookmarkGroup:nth-child(49), .bookmarkList .bookmark:nth-child(49) {\n    animation-delay: 0.65333s; }\n  .ScootIn:nth-child(50), .bookmarkGroup:nth-child(50), .bookmarkList .bookmark:nth-child(50) {\n    animation-delay: 0.66667s; }\n  .ScootIn:nth-child(51), .bookmarkGroup:nth-child(51), .bookmarkList .bookmark:nth-child(51) {\n    animation-delay: 0.68s; }\n  .ScootIn:nth-child(52), .bookmarkGroup:nth-child(52), .bookmarkList .bookmark:nth-child(52) {\n    animation-delay: 0.69333s; }\n  .ScootIn:nth-child(53), .bookmarkGroup:nth-child(53), .bookmarkList .bookmark:nth-child(53) {\n    animation-delay: 0.70667s; }\n  .ScootIn:nth-child(54), .bookmarkGroup:nth-child(54), .bookmarkList .bookmark:nth-child(54) {\n    animation-delay: 0.72s; }\n  .ScootIn:nth-child(55), .bookmarkGroup:nth-child(55), .bookmarkList .bookmark:nth-child(55) {\n    animation-delay: 0.73333s; }\n  .ScootIn:nth-child(56), .bookmarkGroup:nth-child(56), .bookmarkList .bookmark:nth-child(56) {\n    animation-delay: 0.74667s; }\n  .ScootIn:nth-child(57), .bookmarkGroup:nth-child(57), .bookmarkList .bookmark:nth-child(57) {\n    animation-delay: 0.76s; }\n  .ScootIn:nth-child(58), .bookmarkGroup:nth-child(58), .bookmarkList .bookmark:nth-child(58) {\n    animation-delay: 0.77333s; }\n  .ScootIn:nth-child(59), .bookmarkGroup:nth-child(59), .bookmarkList .bookmark:nth-child(59) {\n    animation-delay: 0.78667s; }\n  .ScootIn:nth-child(60), .bookmarkGroup:nth-child(60), .bookmarkList .bookmark:nth-child(60) {\n    animation-delay: 0.8s; }\n  .ScootIn:nth-child(61), .bookmarkGroup:nth-child(61), .bookmarkList .bookmark:nth-child(61) {\n    animation-delay: 0.81333s; }\n  .ScootIn:nth-child(62), .bookmarkGroup:nth-child(62), .bookmarkList .bookmark:nth-child(62) {\n    animation-delay: 0.82667s; }\n  .ScootIn:nth-child(63), .bookmarkGroup:nth-child(63), .bookmarkList .bookmark:nth-child(63) {\n    animation-delay: 0.84s; }\n  .ScootIn:nth-child(64), .bookmarkGroup:nth-child(64), .bookmarkList .bookmark:nth-child(64) {\n    animation-delay: 0.85333s; }\n  .ScootIn:nth-child(65), .bookmarkGroup:nth-child(65), .bookmarkList .bookmark:nth-child(65) {\n    animation-delay: 0.86667s; }\n  .ScootIn:nth-child(66), .bookmarkGroup:nth-child(66), .bookmarkList .bookmark:nth-child(66) {\n    animation-delay: 0.88s; }\n  .ScootIn:nth-child(67), .bookmarkGroup:nth-child(67), .bookmarkList .bookmark:nth-child(67) {\n    animation-delay: 0.89333s; }\n  .ScootIn:nth-child(68), .bookmarkGroup:nth-child(68), .bookmarkList .bookmark:nth-child(68) {\n    animation-delay: 0.90667s; }\n  .ScootIn:nth-child(69), .bookmarkGroup:nth-child(69), .bookmarkList .bookmark:nth-child(69) {\n    animation-delay: 0.92s; }\n  .ScootIn:nth-child(70), .bookmarkGroup:nth-child(70), .bookmarkList .bookmark:nth-child(70) {\n    animation-delay: 0.93333s; }\n  .ScootIn:nth-child(71), .bookmarkGroup:nth-child(71), .bookmarkList .bookmark:nth-child(71) {\n    animation-delay: 0.94667s; }\n  .ScootIn:nth-child(72), .bookmarkGroup:nth-child(72), .bookmarkList .bookmark:nth-child(72) {\n    animation-delay: 0.96s; }\n  .ScootIn:nth-child(73), .bookmarkGroup:nth-child(73), .bookmarkList .bookmark:nth-child(73) {\n    animation-delay: 0.97333s; }\n  .ScootIn:nth-child(74), .bookmarkGroup:nth-child(74), .bookmarkList .bookmark:nth-child(74) {\n    animation-delay: 0.98667s; }\n  .ScootIn:nth-child(75), .bookmarkGroup:nth-child(75), .bookmarkList .bookmark:nth-child(75) {\n    animation-delay: 1s; }\n  .ScootIn:nth-child(76), .bookmarkGroup:nth-child(76), .bookmarkList .bookmark:nth-child(76) {\n    animation-delay: 1.01333s; }\n  .ScootIn:nth-child(77), .bookmarkGroup:nth-child(77), .bookmarkList .bookmark:nth-child(77) {\n    animation-delay: 1.02667s; }\n  .ScootIn:nth-child(78), .bookmarkGroup:nth-child(78), .bookmarkList .bookmark:nth-child(78) {\n    animation-delay: 1.04s; }\n  .ScootIn:nth-child(79), .bookmarkGroup:nth-child(79), .bookmarkList .bookmark:nth-child(79) {\n    animation-delay: 1.05333s; }\n  .ScootIn:nth-child(80), .bookmarkGroup:nth-child(80), .bookmarkList .bookmark:nth-child(80) {\n    animation-delay: 1.06667s; }\n  .ScootIn:nth-child(81), .bookmarkGroup:nth-child(81), .bookmarkList .bookmark:nth-child(81) {\n    animation-delay: 1.08s; }\n  .ScootIn:nth-child(82), .bookmarkGroup:nth-child(82), .bookmarkList .bookmark:nth-child(82) {\n    animation-delay: 1.09333s; }\n  .ScootIn:nth-child(83), .bookmarkGroup:nth-child(83), .bookmarkList .bookmark:nth-child(83) {\n    animation-delay: 1.10667s; }\n  .ScootIn:nth-child(84), .bookmarkGroup:nth-child(84), .bookmarkList .bookmark:nth-child(84) {\n    animation-delay: 1.12s; }\n  .ScootIn:nth-child(85), .bookmarkGroup:nth-child(85), .bookmarkList .bookmark:nth-child(85) {\n    animation-delay: 1.13333s; }\n  .ScootIn:nth-child(86), .bookmarkGroup:nth-child(86), .bookmarkList .bookmark:nth-child(86) {\n    animation-delay: 1.14667s; }\n  .ScootIn:nth-child(87), .bookmarkGroup:nth-child(87), .bookmarkList .bookmark:nth-child(87) {\n    animation-delay: 1.16s; }\n  .ScootIn:nth-child(88), .bookmarkGroup:nth-child(88), .bookmarkList .bookmark:nth-child(88) {\n    animation-delay: 1.17333s; }\n  .ScootIn:nth-child(89), .bookmarkGroup:nth-child(89), .bookmarkList .bookmark:nth-child(89) {\n    animation-delay: 1.18667s; }\n  .ScootIn:nth-child(90), .bookmarkGroup:nth-child(90), .bookmarkList .bookmark:nth-child(90) {\n    animation-delay: 1.2s; }\n  .ScootIn:nth-child(91), .bookmarkGroup:nth-child(91), .bookmarkList .bookmark:nth-child(91) {\n    animation-delay: 1.21333s; }\n  .ScootIn:nth-child(92), .bookmarkGroup:nth-child(92), .bookmarkList .bookmark:nth-child(92) {\n    animation-delay: 1.22667s; }\n  .ScootIn:nth-child(93), .bookmarkGroup:nth-child(93), .bookmarkList .bookmark:nth-child(93) {\n    animation-delay: 1.24s; }\n  .ScootIn:nth-child(94), .bookmarkGroup:nth-child(94), .bookmarkList .bookmark:nth-child(94) {\n    animation-delay: 1.25333s; }\n  .ScootIn:nth-child(95), .bookmarkGroup:nth-child(95), .bookmarkList .bookmark:nth-child(95) {\n    animation-delay: 1.26667s; }\n  .ScootIn:nth-child(96), .bookmarkGroup:nth-child(96), .bookmarkList .bookmark:nth-child(96) {\n    animation-delay: 1.28s; }\n  .ScootIn:nth-child(97), .bookmarkGroup:nth-child(97), .bookmarkList .bookmark:nth-child(97) {\n    animation-delay: 1.29333s; }\n  .ScootIn:nth-child(98), .bookmarkGroup:nth-child(98), .bookmarkList .bookmark:nth-child(98) {\n    animation-delay: 1.30667s; }\n  .ScootIn:nth-child(99), .bookmarkGroup:nth-child(99), .bookmarkList .bookmark:nth-child(99) {\n    animation-delay: 1.32s; }\n  .ScootIn:nth-child(100), .bookmarkGroup:nth-child(100), .bookmarkList .bookmark:nth-child(100) {\n    animation-delay: 1.33333s; }\n\nhtml {\n  box-sizing: border-box;\n  width: 100%;\n  background: #f0f0f0;\n  width: 360px;\n  min-height: 1000px;\n  max-width: 360px;\n  overflow: scroll;\n  user-select: none; }\n\nbody {\n  padding: 0;\n  margin: 0; }\n\n*, *:before, *:after {\n  box-sizing: inherit;\n  outline: none; }\n\n#app {\n  width: 100%; }\n\n.bookmarkGroup .header {\n  font-size: 13px;\n  color: #666;\n  font-weight: bold;\n  text-align: center;\n  overflow: auto;\n  margin: 0 auto;\n  background: linear-gradient(#f0f0f0, #ebebeb);\n  border-bottom: 1px solid #e2e2e2;\n  width: 100%;\n  cursor: pointer; }\n  .bookmarkGroup .header .title {\n    width: 60%;\n    float: left;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .title:hover {\n      background: #e6e6e6; }\n  .bookmarkGroup .header input {\n    padding: 5px;\n    background: white;\n    border: 1px solid #cecece;\n    border-radius: 2px;\n    position: relative;\n    font-size: 12px;\n    padding-top: 4px;\n    border-bottom: none; }\n  .bookmarkGroup .header .fa-plus {\n    width: 20%;\n    border-left: 1px solid #eaeaea;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-plus:hover {\n      background: #e6e6e6; }\n  .bookmarkGroup .header .fa-remove {\n    width: 10%;\n    border-left: 1px solid #eaeaea;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-remove:hover {\n      background: #e6e6e6; }\n  .bookmarkGroup .header .fa-pencil {\n    width: 10%;\n    border-left: 1px solid #eaeaea;\n    border-right: 1px solid #cecece;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-pencil:hover {\n      background: #e6e6e6; }\n\n.bookmarkList .bookmark {\n  text-decoration: none;\n  font-size: 12px;\n  display: inline-block;\n  width: 100%;\n  white-space: nowrap;\n  height: 32px;\n  background: #f8f8f8; }\n  .bookmarkList .bookmark img {\n    width: 16px;\n    float: left;\n    margin: 7px;\n    margin-right: 1em;\n    transition: .1s all; }\n  .bookmarkList .bookmark input {\n    padding: 5px;\n    margin-top: 3px;\n    background: white;\n    border: 1px solid #cecece;\n    border-radius: 2px;\n    width: 70%;\n    position: relative;\n    left: -6px;\n    font-size: 12px;\n    padding-top: 4px; }\n  .bookmarkList .bookmark a {\n    line-height: 30px;\n    width: 70%;\n    height: 29px;\n    display: inline-block; }\n    .bookmarkList .bookmark a .title {\n      float: left;\n      overflow: hidden;\n      width: 65%;\n      color: #555;\n      transition: .1s all; }\n    .bookmarkList .bookmark a .date {\n      font-size: 10px;\n      color: #777;\n      float: right;\n      width: 20%;\n      text-align: right; }\n  .bookmarkList .bookmark .star {\n    display: none;\n    position: absolute;\n    left: 0px;\n    top: 0px; }\n    .bookmarkList .bookmark .star .star-front {\n      position: absolute;\n      left: 2px;\n      top: 2px;\n      font-size: 15px;\n      color: #ffb800; }\n    .bookmarkList .bookmark .star .star-back {\n      position: absolute;\n      left: 3px;\n      top: 3px;\n      font-size: 16px;\n      color: #522200; }\n  .bookmarkList .bookmark .edit, .bookmarkList .bookmark .delete {\n    color: #666;\n    padding: 10px;\n    width: 9%;\n    float: right;\n    border-left: 1px solid #cccccc;\n    cursor: pointer; }\n    .bookmarkList .bookmark .edit:hover, .bookmarkList .bookmark .delete:hover {\n      background: rgba(0, 0, 0, 0.1); }\n    .bookmarkList .bookmark .edit.dark, .bookmarkList .bookmark .delete.dark {\n      background: rgba(0, 0, 0, 0.1); }\n  .bookmarkList .bookmark:hover {\n    background: white;\n    border-bottom: 1px solid #f0f0f0;\n    /*\n            a .title{\n                font-size: 14px;\n                font-weight: bold;\n            }\n            a img{\n                position: relative;\n                transform: scale(2);\n            }\n            */ }\n\n.toolbar {\n  overflow: auto;\n  background: linear-gradient(white, #fbfafa);\n  height: 45px;\n  padding-top: 5px; }\n  .toolbar .addFolder {\n    width: 50px;\n    height: 34px;\n    padding-top: 6px;\n    padding-left: 6px;\n    float: left; }\n    .toolbar .addFolder .fa-folder-open {\n      font-size: 20px;\n      color: #AAA; }\n    .toolbar .addFolder .fa-plus {\n      font-size: 12px;\n      color: #AAA;\n      position: relative;\n      left: -5px;\n      top: -4px;\n      padding-left: 4px; }\n    .toolbar .addFolder:hover .fa-plus, .toolbar .addFolder:hover .fa-folder-open {\n      color: #555; }\n  .toolbar .searchBar {\n    float: left;\n    padding: 5px;\n    margin-top: 3px;\n    background: white;\n    border: 1px solid #cecece;\n    border-radius: 3px;\n    width: 75%;\n    position: relative;\n    font-size: 12px;\n    padding-top: 4px;\n    margin-left: 3px;\n    margin-right: 3px; }\n  .toolbar .search {\n    width: 34px;\n    height: 34px;\n    padding-top: 4px;\n    padding-left: 6px;\n    float: right;\n    font-size: 20px;\n    color: #777; }\n\nli.placeholder {\n  background: #fff078; }\n\nli.placeholder:before {\n  content: \"Drop here\";\n  color: #e1d25a; }\n", ""]);
+	exports.push([module.id, "@-webkit-keyframes ScootInAnimation {\n  0% {\n    opacity: 0;\n    left: -500px; }\n  60% {\n    opacity: 0; }\n  100% {\n    opacity: 1;\n    left: 0px; } }\n\n.ScootIn, .bookmarkList .bookmark {\n  position: relative;\n  opacity: 0;\n  animation: ScootInAnimation .3s forwards; }\n  .ScootIn:nth-child(1), .bookmarkList .bookmark:nth-child(1) {\n    animation-delay: 0.01333s; }\n  .ScootIn:nth-child(2), .bookmarkList .bookmark:nth-child(2) {\n    animation-delay: 0.02667s; }\n  .ScootIn:nth-child(3), .bookmarkList .bookmark:nth-child(3) {\n    animation-delay: 0.04s; }\n  .ScootIn:nth-child(4), .bookmarkList .bookmark:nth-child(4) {\n    animation-delay: 0.05333s; }\n  .ScootIn:nth-child(5), .bookmarkList .bookmark:nth-child(5) {\n    animation-delay: 0.06667s; }\n  .ScootIn:nth-child(6), .bookmarkList .bookmark:nth-child(6) {\n    animation-delay: 0.08s; }\n  .ScootIn:nth-child(7), .bookmarkList .bookmark:nth-child(7) {\n    animation-delay: 0.09333s; }\n  .ScootIn:nth-child(8), .bookmarkList .bookmark:nth-child(8) {\n    animation-delay: 0.10667s; }\n  .ScootIn:nth-child(9), .bookmarkList .bookmark:nth-child(9) {\n    animation-delay: 0.12s; }\n  .ScootIn:nth-child(10), .bookmarkList .bookmark:nth-child(10) {\n    animation-delay: 0.13333s; }\n  .ScootIn:nth-child(11), .bookmarkList .bookmark:nth-child(11) {\n    animation-delay: 0.14667s; }\n  .ScootIn:nth-child(12), .bookmarkList .bookmark:nth-child(12) {\n    animation-delay: 0.16s; }\n  .ScootIn:nth-child(13), .bookmarkList .bookmark:nth-child(13) {\n    animation-delay: 0.17333s; }\n  .ScootIn:nth-child(14), .bookmarkList .bookmark:nth-child(14) {\n    animation-delay: 0.18667s; }\n  .ScootIn:nth-child(15), .bookmarkList .bookmark:nth-child(15) {\n    animation-delay: 0.2s; }\n  .ScootIn:nth-child(16), .bookmarkList .bookmark:nth-child(16) {\n    animation-delay: 0.21333s; }\n  .ScootIn:nth-child(17), .bookmarkList .bookmark:nth-child(17) {\n    animation-delay: 0.22667s; }\n  .ScootIn:nth-child(18), .bookmarkList .bookmark:nth-child(18) {\n    animation-delay: 0.24s; }\n  .ScootIn:nth-child(19), .bookmarkList .bookmark:nth-child(19) {\n    animation-delay: 0.25333s; }\n  .ScootIn:nth-child(20), .bookmarkList .bookmark:nth-child(20) {\n    animation-delay: 0.26667s; }\n  .ScootIn:nth-child(21), .bookmarkList .bookmark:nth-child(21) {\n    animation-delay: 0.28s; }\n  .ScootIn:nth-child(22), .bookmarkList .bookmark:nth-child(22) {\n    animation-delay: 0.29333s; }\n  .ScootIn:nth-child(23), .bookmarkList .bookmark:nth-child(23) {\n    animation-delay: 0.30667s; }\n  .ScootIn:nth-child(24), .bookmarkList .bookmark:nth-child(24) {\n    animation-delay: 0.32s; }\n  .ScootIn:nth-child(25), .bookmarkList .bookmark:nth-child(25) {\n    animation-delay: 0.33333s; }\n  .ScootIn:nth-child(26), .bookmarkList .bookmark:nth-child(26) {\n    animation-delay: 0.34667s; }\n  .ScootIn:nth-child(27), .bookmarkList .bookmark:nth-child(27) {\n    animation-delay: 0.36s; }\n  .ScootIn:nth-child(28), .bookmarkList .bookmark:nth-child(28) {\n    animation-delay: 0.37333s; }\n  .ScootIn:nth-child(29), .bookmarkList .bookmark:nth-child(29) {\n    animation-delay: 0.38667s; }\n  .ScootIn:nth-child(30), .bookmarkList .bookmark:nth-child(30) {\n    animation-delay: 0.4s; }\n  .ScootIn:nth-child(31), .bookmarkList .bookmark:nth-child(31) {\n    animation-delay: 0.41333s; }\n  .ScootIn:nth-child(32), .bookmarkList .bookmark:nth-child(32) {\n    animation-delay: 0.42667s; }\n  .ScootIn:nth-child(33), .bookmarkList .bookmark:nth-child(33) {\n    animation-delay: 0.44s; }\n  .ScootIn:nth-child(34), .bookmarkList .bookmark:nth-child(34) {\n    animation-delay: 0.45333s; }\n  .ScootIn:nth-child(35), .bookmarkList .bookmark:nth-child(35) {\n    animation-delay: 0.46667s; }\n  .ScootIn:nth-child(36), .bookmarkList .bookmark:nth-child(36) {\n    animation-delay: 0.48s; }\n  .ScootIn:nth-child(37), .bookmarkList .bookmark:nth-child(37) {\n    animation-delay: 0.49333s; }\n  .ScootIn:nth-child(38), .bookmarkList .bookmark:nth-child(38) {\n    animation-delay: 0.50667s; }\n  .ScootIn:nth-child(39), .bookmarkList .bookmark:nth-child(39) {\n    animation-delay: 0.52s; }\n  .ScootIn:nth-child(40), .bookmarkList .bookmark:nth-child(40) {\n    animation-delay: 0.53333s; }\n  .ScootIn:nth-child(41), .bookmarkList .bookmark:nth-child(41) {\n    animation-delay: 0.54667s; }\n  .ScootIn:nth-child(42), .bookmarkList .bookmark:nth-child(42) {\n    animation-delay: 0.56s; }\n  .ScootIn:nth-child(43), .bookmarkList .bookmark:nth-child(43) {\n    animation-delay: 0.57333s; }\n  .ScootIn:nth-child(44), .bookmarkList .bookmark:nth-child(44) {\n    animation-delay: 0.58667s; }\n  .ScootIn:nth-child(45), .bookmarkList .bookmark:nth-child(45) {\n    animation-delay: 0.6s; }\n  .ScootIn:nth-child(46), .bookmarkList .bookmark:nth-child(46) {\n    animation-delay: 0.61333s; }\n  .ScootIn:nth-child(47), .bookmarkList .bookmark:nth-child(47) {\n    animation-delay: 0.62667s; }\n  .ScootIn:nth-child(48), .bookmarkList .bookmark:nth-child(48) {\n    animation-delay: 0.64s; }\n  .ScootIn:nth-child(49), .bookmarkList .bookmark:nth-child(49) {\n    animation-delay: 0.65333s; }\n  .ScootIn:nth-child(50), .bookmarkList .bookmark:nth-child(50) {\n    animation-delay: 0.66667s; }\n  .ScootIn:nth-child(51), .bookmarkList .bookmark:nth-child(51) {\n    animation-delay: 0.68s; }\n  .ScootIn:nth-child(52), .bookmarkList .bookmark:nth-child(52) {\n    animation-delay: 0.69333s; }\n  .ScootIn:nth-child(53), .bookmarkList .bookmark:nth-child(53) {\n    animation-delay: 0.70667s; }\n  .ScootIn:nth-child(54), .bookmarkList .bookmark:nth-child(54) {\n    animation-delay: 0.72s; }\n  .ScootIn:nth-child(55), .bookmarkList .bookmark:nth-child(55) {\n    animation-delay: 0.73333s; }\n  .ScootIn:nth-child(56), .bookmarkList .bookmark:nth-child(56) {\n    animation-delay: 0.74667s; }\n  .ScootIn:nth-child(57), .bookmarkList .bookmark:nth-child(57) {\n    animation-delay: 0.76s; }\n  .ScootIn:nth-child(58), .bookmarkList .bookmark:nth-child(58) {\n    animation-delay: 0.77333s; }\n  .ScootIn:nth-child(59), .bookmarkList .bookmark:nth-child(59) {\n    animation-delay: 0.78667s; }\n  .ScootIn:nth-child(60), .bookmarkList .bookmark:nth-child(60) {\n    animation-delay: 0.8s; }\n  .ScootIn:nth-child(61), .bookmarkList .bookmark:nth-child(61) {\n    animation-delay: 0.81333s; }\n  .ScootIn:nth-child(62), .bookmarkList .bookmark:nth-child(62) {\n    animation-delay: 0.82667s; }\n  .ScootIn:nth-child(63), .bookmarkList .bookmark:nth-child(63) {\n    animation-delay: 0.84s; }\n  .ScootIn:nth-child(64), .bookmarkList .bookmark:nth-child(64) {\n    animation-delay: 0.85333s; }\n  .ScootIn:nth-child(65), .bookmarkList .bookmark:nth-child(65) {\n    animation-delay: 0.86667s; }\n  .ScootIn:nth-child(66), .bookmarkList .bookmark:nth-child(66) {\n    animation-delay: 0.88s; }\n  .ScootIn:nth-child(67), .bookmarkList .bookmark:nth-child(67) {\n    animation-delay: 0.89333s; }\n  .ScootIn:nth-child(68), .bookmarkList .bookmark:nth-child(68) {\n    animation-delay: 0.90667s; }\n  .ScootIn:nth-child(69), .bookmarkList .bookmark:nth-child(69) {\n    animation-delay: 0.92s; }\n  .ScootIn:nth-child(70), .bookmarkList .bookmark:nth-child(70) {\n    animation-delay: 0.93333s; }\n  .ScootIn:nth-child(71), .bookmarkList .bookmark:nth-child(71) {\n    animation-delay: 0.94667s; }\n  .ScootIn:nth-child(72), .bookmarkList .bookmark:nth-child(72) {\n    animation-delay: 0.96s; }\n  .ScootIn:nth-child(73), .bookmarkList .bookmark:nth-child(73) {\n    animation-delay: 0.97333s; }\n  .ScootIn:nth-child(74), .bookmarkList .bookmark:nth-child(74) {\n    animation-delay: 0.98667s; }\n  .ScootIn:nth-child(75), .bookmarkList .bookmark:nth-child(75) {\n    animation-delay: 1s; }\n  .ScootIn:nth-child(76), .bookmarkList .bookmark:nth-child(76) {\n    animation-delay: 1.01333s; }\n  .ScootIn:nth-child(77), .bookmarkList .bookmark:nth-child(77) {\n    animation-delay: 1.02667s; }\n  .ScootIn:nth-child(78), .bookmarkList .bookmark:nth-child(78) {\n    animation-delay: 1.04s; }\n  .ScootIn:nth-child(79), .bookmarkList .bookmark:nth-child(79) {\n    animation-delay: 1.05333s; }\n  .ScootIn:nth-child(80), .bookmarkList .bookmark:nth-child(80) {\n    animation-delay: 1.06667s; }\n  .ScootIn:nth-child(81), .bookmarkList .bookmark:nth-child(81) {\n    animation-delay: 1.08s; }\n  .ScootIn:nth-child(82), .bookmarkList .bookmark:nth-child(82) {\n    animation-delay: 1.09333s; }\n  .ScootIn:nth-child(83), .bookmarkList .bookmark:nth-child(83) {\n    animation-delay: 1.10667s; }\n  .ScootIn:nth-child(84), .bookmarkList .bookmark:nth-child(84) {\n    animation-delay: 1.12s; }\n  .ScootIn:nth-child(85), .bookmarkList .bookmark:nth-child(85) {\n    animation-delay: 1.13333s; }\n  .ScootIn:nth-child(86), .bookmarkList .bookmark:nth-child(86) {\n    animation-delay: 1.14667s; }\n  .ScootIn:nth-child(87), .bookmarkList .bookmark:nth-child(87) {\n    animation-delay: 1.16s; }\n  .ScootIn:nth-child(88), .bookmarkList .bookmark:nth-child(88) {\n    animation-delay: 1.17333s; }\n  .ScootIn:nth-child(89), .bookmarkList .bookmark:nth-child(89) {\n    animation-delay: 1.18667s; }\n  .ScootIn:nth-child(90), .bookmarkList .bookmark:nth-child(90) {\n    animation-delay: 1.2s; }\n  .ScootIn:nth-child(91), .bookmarkList .bookmark:nth-child(91) {\n    animation-delay: 1.21333s; }\n  .ScootIn:nth-child(92), .bookmarkList .bookmark:nth-child(92) {\n    animation-delay: 1.22667s; }\n  .ScootIn:nth-child(93), .bookmarkList .bookmark:nth-child(93) {\n    animation-delay: 1.24s; }\n  .ScootIn:nth-child(94), .bookmarkList .bookmark:nth-child(94) {\n    animation-delay: 1.25333s; }\n  .ScootIn:nth-child(95), .bookmarkList .bookmark:nth-child(95) {\n    animation-delay: 1.26667s; }\n  .ScootIn:nth-child(96), .bookmarkList .bookmark:nth-child(96) {\n    animation-delay: 1.28s; }\n  .ScootIn:nth-child(97), .bookmarkList .bookmark:nth-child(97) {\n    animation-delay: 1.29333s; }\n  .ScootIn:nth-child(98), .bookmarkList .bookmark:nth-child(98) {\n    animation-delay: 1.30667s; }\n  .ScootIn:nth-child(99), .bookmarkList .bookmark:nth-child(99) {\n    animation-delay: 1.32s; }\n  .ScootIn:nth-child(100), .bookmarkList .bookmark:nth-child(100) {\n    animation-delay: 1.33333s; }\n\nhtml {\n  box-sizing: border-box;\n  width: 100%;\n  background: #f0f0f0;\n  width: 360px;\n  min-height: 1000px;\n  max-width: 360px;\n  overflow: scroll;\n  user-select: none; }\n\n*.red {\n  color: #FFC6C6;\n  background: rgba(255, 49, 49, 0.6); }\n\n*.tan {\n  color: #FFD6C6;\n  background: rgba(255, 108, 49, 0.6); }\n\n*.orange {\n  color: #FFE0C6;\n  background: rgba(255, 142, 49, 0.6); }\n\n*.skin {\n  color: #FFE7C6;\n  background: rgba(255, 167, 49, 0.6); }\n\n*.gold {\n  color: #FFECC6;\n  background: rgba(255, 186, 49, 0.6); }\n\n*.sun {\n  color: #FFF1C6;\n  background: rgba(255, 203, 49, 0.6); }\n\n*.sunflower {\n  color: #FFF5C6;\n  background: rgba(255, 220, 49, 0.6); }\n\n*.yellow {\n  color: #FFFAC6;\n  background: rgba(255, 236, 49, 0.6); }\n\n*.spring {\n  color: #FFFFC6;\n  background: rgba(255, 255, 49, 0.6); }\n\n*.salad {\n  color: #F5FFC6;\n  background: rgba(214, 248, 48, 0.6); }\n\n*.grass {\n  color: #EBFFC6;\n  background: rgba(174, 241, 46, 0.6); }\n\n*.green {\n  color: #E0FFC6;\n  background: rgba(130, 233, 45, 0.6); }\n\n*.emerald {\n  color: #C6FFC6;\n  background: rgba(41, 215, 41, 0.6); }\n\n*.teal {\n  color: #C6FFE7;\n  background: rgba(37, 192, 126, 0.6); }\n\n*.beach {\n  color: #C5FFFF;\n  background: rgba(33, 174, 174, 0.6); }\n\n*.babyblue {\n  color: #C9E8FF;\n  background: rgba(44, 123, 183, 0.6); }\n\n*.blue {\n  color: #CBDBFF;\n  background: rgba(52, 93, 188, 0.6); }\n\n*.navy {\n  color: #CECEFF;\n  background: rgba(60, 60, 194, 0.6); }\n\n*.indigo {\n  color: #D8CCFF;\n  background: rgba(87, 54, 192, 0.6); }\n\n*.violet {\n  color: #E1CAFF;\n  background: rgba(110, 49, 190, 0.6); }\n\n*.purple {\n  color: #ECC8FF;\n  background: rgba(137, 44, 188, 0.6); }\n\n*.plum {\n  color: #FFC5FF;\n  background: rgba(184, 35, 184, 0.6); }\n\n*.magenta {\n  color: #FFC5E6;\n  background: rgba(215, 41, 139, 0.6); }\n\n*.pink {\n  color: #FFC5D7;\n  background: rgba(234, 44, 102, 0.6); }\n\n* .white {\n  background: white;\n  color: #666; }\n\n* .grey {\n  background: #f8f8f8;\n  color: #666; }\n\nbody {\n  padding: 0;\n  margin: 0; }\n\n*, *:before, *:after {\n  box-sizing: inherit;\n  outline: none; }\n\n#app {\n  width: 100%; }\n\n.bookmarkGroup .interior.disabled {\n  pointer-events: none; }\n\n.bookmarkGroup .colorPicker {\n  overflow-y: auto;\n  overflow-x: hidden; }\n  .bookmarkGroup .colorPicker .colorMap {\n    width: 100%;\n    background: white;\n    height: 30px; }\n    .bookmarkGroup .colorPicker .colorMap .color {\n      width: 27.7px;\n      height: 15px;\n      float: left;\n      border: 2px solid transparent; }\n      .bookmarkGroup .colorPicker .colorMap .color:hover {\n        border: 2px solid black; }\n\n.bookmarkGroup .header {\n  font-size: 13px;\n  font-weight: bold;\n  text-align: left;\n  overflow: hidden;\n  margin: 0 auto;\n  width: 100%;\n  cursor: pointer; }\n  .bookmarkGroup .header .title {\n    width: 50%;\n    float: left;\n    white-space: nowrap;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .title:hover {\n      background: rgba(0, 0, 0, 0.05); }\n  .bookmarkGroup .header input {\n    padding: 5px;\n    background: rgba(255, 255, 255, 0.5);\n    position: relative;\n    font-size: 12px;\n    padding-top: 4px;\n    border: 1px solid transparent; }\n    .bookmarkGroup .header input::-webkit-input-placeholder {\n      color: inherit; }\n  .bookmarkGroup .header .fa-folder {\n    float: left;\n    width: 10%;\n    padding: .5em;\n    height: 29px;\n    padding-left: 12px; }\n  .bookmarkGroup .header .fa-plus {\n    width: 10%;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-plus:hover {\n      background: rgba(0, 0, 0, 0.05); }\n  .bookmarkGroup .header .fa-remove {\n    width: 10%;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-remove:hover {\n      background: rgba(0, 0, 0, 0.05); }\n  .bookmarkGroup .header .fa-pencil {\n    width: 10%;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-pencil:hover {\n      background: rgba(0, 0, 0, 0.05); }\n  .bookmarkGroup .header .fa-paint-brush {\n    width: 10%;\n    padding: .5em;\n    height: 29px; }\n    .bookmarkGroup .header .fa-paint-brush:hover {\n      background: rgba(0, 0, 0, 0.05); }\n\n.placeholder {\n  width: 100%;\n  height: 29px;\n  background: #f0f0f0; }\n\n.bookmarkList .bookmark {\n  text-decoration: none;\n  font-size: 12px;\n  display: inline-block;\n  width: 100%;\n  white-space: nowrap;\n  height: 32px;\n  background: #ece8e8; }\n  .bookmarkList .bookmark img {\n    width: 16px;\n    float: left;\n    margin: 7px;\n    margin-right: 1em;\n    transition: .1s all; }\n  .bookmarkList .bookmark input {\n    padding: 5px;\n    margin-top: 3px;\n    background: white;\n    width: 70%;\n    position: relative;\n    left: -6px;\n    font-size: 12px;\n    padding-top: 4px; }\n  .bookmarkList .bookmark a {\n    line-height: 30px;\n    width: 70%;\n    height: 29px;\n    display: inline-block; }\n    .bookmarkList .bookmark a .title {\n      float: left;\n      overflow: hidden;\n      width: 100%;\n      color: #555;\n      transition: .1s all; }\n    .bookmarkList .bookmark a .date {\n      font-size: 10px;\n      color: #777;\n      float: right;\n      width: 20%;\n      text-align: right; }\n  .bookmarkList .bookmark .star {\n    display: none;\n    position: absolute;\n    left: 0px;\n    top: 0px; }\n    .bookmarkList .bookmark .star .star-front {\n      position: absolute;\n      left: 2px;\n      top: 2px;\n      font-size: 15px;\n      color: #ffb800; }\n    .bookmarkList .bookmark .star .star-back {\n      position: absolute;\n      left: 3px;\n      top: 3px;\n      font-size: 16px;\n      color: #522200; }\n  .bookmarkList .bookmark .edit, .bookmarkList .bookmark .delete {\n    color: #666;\n    padding: 10px;\n    width: 9%;\n    float: right;\n    cursor: pointer; }\n    .bookmarkList .bookmark .edit:hover, .bookmarkList .bookmark .delete:hover {\n      background: rgba(0, 0, 0, 0.1); }\n    .bookmarkList .bookmark .edit.dark, .bookmarkList .bookmark .delete.dark {\n      background: rgba(0, 0, 0, 0.1); }\n  .bookmarkList .bookmark:hover {\n    background: linear-gradient(to right, rgba(248, 248, 248, 0.5), #f8f8f8);\n    /*\n            a .title{\n                font-size: 14px;\n                font-weight: bold;\n            }\n            a img{\n                position: relative;\n                transform: scale(2);\n            }\n            */ }\n\n.toolbar {\n  overflow: auto;\n  background: linear-gradient(white, #fbfafa);\n  height: 45px;\n  padding-top: 5px; }\n  .toolbar .addFolder {\n    width: 50px;\n    height: 34px;\n    padding-top: 6px;\n    padding-left: 6px;\n    float: left; }\n    .toolbar .addFolder .fa-folder-open {\n      font-size: 20px;\n      color: #AAA; }\n    .toolbar .addFolder .fa-plus {\n      font-size: 12px;\n      color: #AAA;\n      position: relative;\n      left: -5px;\n      top: -4px;\n      padding-left: 4px; }\n    .toolbar .addFolder:hover .fa-plus, .toolbar .addFolder:hover .fa-folder-open {\n      color: #555; }\n  .toolbar .searchBar {\n    float: left;\n    padding: 5px;\n    margin-top: 3px;\n    background: white;\n    border: 1px solid #cecece;\n    border-radius: 3px;\n    width: 75%;\n    position: relative;\n    font-size: 12px;\n    padding-top: 4px;\n    margin-left: 3px;\n    margin-right: 3px; }\n  .toolbar .search {\n    width: 34px;\n    height: 34px;\n    padding-top: 4px;\n    padding-left: 6px;\n    float: right;\n    font-size: 20px;\n    color: #777; }\n", ""]);
 
 	// exports
 
-
-/***/ },
-/* 211 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _class, _class2, _temp;
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(34);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _mobxReact = __webpack_require__(194);
-
-	var _mobx = __webpack_require__(195);
-
-	__webpack_require__(196);
-
-	var _Bookmark2 = __webpack_require__(206);
-
-	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	/*
-	Bookmark chrome api schema
-	-children (if it is a folder)
-	-dateAdded
-	-dateGroupModified
-	-id
-	-index
-	-parentID
-	-title
-	-url (if it isn not a folder)
-	*/
-
-	var BookmarkRow = (0, _mobxReact.observer)(_class = (_temp = _class2 = function (_Bookmark) {
-	    _inherits(BookmarkRow, _Bookmark);
-
-	    function BookmarkRow(props) {
-	        _classCallCheck(this, BookmarkRow);
-
-	        var _this = _possibleConstructorReturn(this, (BookmarkRow.__proto__ || Object.getPrototypeOf(BookmarkRow)).call(this, props));
-
-	        var bookmark = _this.props.bookmark;
-
-	        //title and URL
-	        _this.imageURL = 'chrome://favicon/' + bookmark.url;
-	        if (bookmark.title === bookmark.url) {
-	            _this.title = bookmark.title.replace(/.*?:\/\//g, '').replace('www.', '');
-	        }
-
-	        //dates
-	        _this.monthNames = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	        _this.date = new Date(bookmark.dateAdded);
-	        _this.day = _this.date.getDate();
-	        _this.month = _this.monthNames[_this.date.getMonth()];
-	        _this.year = _this.date.getFullYear();
-	        return _this;
-	    }
-
-	    _createClass(BookmarkRow, [{
-	        key: 'removeBookmark',
-	        value: function removeBookmark() {
-	            var _this2 = this;
-
-	            chrome.bookmarks.remove(this.props.id, function () {
-	                _this2.props.store.load();
-	            });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var bookmark = this.props.bookmark;
-	            var editStyle = 'fa fa-pencil edit';
-	            if (this.renaming) {
-	                editStyle = 'fa fa-pencil dark edit';
-	            } else {
-	                editStyle = 'fa fa-pencil edit';
-	            }
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'bookmark' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'star' },
-	                    _react2.default.createElement('i', { className: 'fa fa-star star-back' }),
-	                    _react2.default.createElement('i', { className: 'fa fa-star star-front' })
-	                ),
-	                _react2.default.createElement('img', { src: this.imageURL }),
-	                this.store.content,
-	                _react2.default.createElement('i', { className: 'fa fa-remove delete', onClick: this.removeBookmark.bind(this) }),
-	                _react2.default.createElement('i', { className: editStyle, onClick: this.rename.bind(this) })
-	            );
-	        }
-	    }]);
-
-	    return BookmarkRow;
-	}(_Bookmark3.default), _class2.propTypes = {
-	    bookmark: _react2.default.PropTypes.any,
-	    id: _react2.default.PropTypes.any,
-	    store: _react2.default.PropTypes.any
-	}, _temp)) || _class;
-
-	exports.default = BookmarkRow;
 
 /***/ },
 /* 212 */
@@ -28329,11 +28620,11 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.default = undefined;
+	exports.Color = exports.default = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _class, _class2, _temp;
+	var _class, _temp, _class2, _temp2;
 
 	var _react = __webpack_require__(1);
 
@@ -28347,20 +28638,6 @@
 
 	var _reactCollapse2 = _interopRequireDefault(_reactCollapse);
 
-	var _mobxReact = __webpack_require__(194);
-
-	var _mobx = __webpack_require__(195);
-
-	__webpack_require__(196);
-
-	var _BookmarkRow = __webpack_require__(211);
-
-	var _BookmarkRow2 = _interopRequireDefault(_BookmarkRow);
-
-	var _Bookmark2 = __webpack_require__(206);
-
-	var _Bookmark3 = _interopRequireDefault(_Bookmark2);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28369,102 +28646,76 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var BookmarkGroup = (0, _mobxReact.observer)(_class = (_temp = _class2 = function (_Bookmark) {
-	    _inherits(BookmarkGroup, _Bookmark);
+	var ColorPicker = (_temp = _class = function (_React$Component) {
+	    _inherits(ColorPicker, _React$Component);
 
-	    function BookmarkGroup(props) {
-	        _classCallCheck(this, BookmarkGroup);
+	    function ColorPicker(props) {
+	        _classCallCheck(this, ColorPicker);
 
-	        var _this = _possibleConstructorReturn(this, (BookmarkGroup.__proto__ || Object.getPrototypeOf(BookmarkGroup)).call(this, props));
+	        var _this = _possibleConstructorReturn(this, (ColorPicker.__proto__ || Object.getPrototypeOf(ColorPicker)).call(this, props));
 
-	        var state = JSON.parse(localStorage.getItem(_this.props.bookmark.id));
-	        if (!state) {
-	            state = false;
-	        }
-	        _this.state = { collapsed: state };
+	        var colors = ['grey', 'white', 'red', 'tan', 'orange', 'skin', 'gold', 'sun', 'sunflower', 'yellow', 'spring', 'salad', 'grass', 'green', 'emerald', 'teal', 'beach', 'babyblue', 'blue', 'navy', 'indigo', 'violet', 'purple', 'plum', 'magenta', 'pink'];
+	        _this.colorMap = colors.map(function (color, i) {
+	            return _react2.default.createElement(Color, { color: color, key: i, setColor: _this.props.setColor });
+	        });
 	        return _this;
 	    }
 
-	    _createClass(BookmarkGroup, [{
-	        key: 'expand',
-	        value: function expand() {
-	            var _this2 = this;
-
-	            if (!this.renaming) {
-	                this.setState({ collapsed: !this.state.collapsed }, function () {
-	                    localStorage.setItem(_this2.props.bookmark.id, _this2.state.collapsed);
-	                });
-	            }
-	        }
-	    }, {
-	        key: 'addBookmark',
-	        value: function addBookmark() {
-	            var _this3 = this;
-
-	            var id = this.props.bookmark.id;
-	            chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
-	                var url = tabs[0].url;
-	                var bookmark = {
-	                    parentId: id,
-	                    index: 0,
-	                    title: url,
-	                    url: url
-	                };
-	                chrome.bookmarks.create(bookmark);
-	                if (!_this3.state.collapsed) {
-	                    _this3.expand();
-	                }
-	                _this3.props.store.load();
-	            });
-	        }
-	    }, {
-	        key: 'removeFolder',
-	        value: function removeFolder() {
-	            var _this4 = this;
-
-	            var id = this.props.bookmark.id;
-	            if (this.props.bookmark.children.length === 0) {
-	                chrome.bookmarks.remove(id, function () {
-	                    _this4.props.store.load();
-	                });
-	            }
-	        }
-	    }, {
+	    _createClass(ColorPicker, [{
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'bookmarkGroup' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'header' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { onClick: this.expand.bind(this) },
-	                        this.store.content
-	                    ),
-	                    _react2.default.createElement('i', { className: 'fa fa-plus', onClick: this.addBookmark.bind(this) }),
-	                    _react2.default.createElement('i', { className: 'fa fa-pencil', onClick: this.rename.bind(this) }),
-	                    _react2.default.createElement('i', { className: 'fa fa-remove', onClick: this.removeFolder.bind(this) })
-	                ),
+	                { className: 'colorPicker' },
 	                _react2.default.createElement(
 	                    _reactCollapse2.default,
-	                    { isOpened: this.state.collapsed },
-	                    this.props.children
+	                    { isOpened: this.props.collapsed },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'colorMap' },
+	                        this.colorMap
+	                    )
 	                )
 	            );
 	        }
 	    }]);
 
-	    return BookmarkGroup;
-	}(_Bookmark3.default), _class2.propTypes = {
-	    children: _react2.default.PropTypes.any,
-	    bookmark: _react2.default.PropTypes.any,
-	    store: _react2.default.PropTypes.any,
-	    id: _react2.default.PropTypes.any
-	}, _temp)) || _class;
+	    return ColorPicker;
+	}(_react2.default.Component), _class.propTypes = {
+	    setColor: _react2.default.PropTypes.any
+	}, _class.propTypes = {
+	    collapsed: _react2.default.PropTypes.any
+	}, _temp);
+	exports.default = ColorPicker;
+	var Color = exports.Color = (_temp2 = _class2 = function (_React$Component2) {
+	    _inherits(Color, _React$Component2);
 
-	exports.default = BookmarkGroup;
+	    function Color(props) {
+	        _classCallCheck(this, Color);
+
+	        var _this2 = _possibleConstructorReturn(this, (Color.__proto__ || Object.getPrototypeOf(Color)).call(this, props));
+
+	        _this2.style = 'color ' + _this2.props.color;
+	        return _this2;
+	    }
+
+	    _createClass(Color, [{
+	        key: 'setColor',
+	        value: function setColor() {
+	            this.props.setColor(this.props.color);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement('div', { className: this.style, onClick: this.setColor.bind(this) });
+	        }
+	    }]);
+
+	    return Color;
+	}(_react2.default.Component), _class2.propTypes = {
+	    color: _react2.default.PropTypes.any,
+	    setColor: _react2.default.PropTypes.any
+	}, _temp2);
 
 /***/ }
 /******/ ]);

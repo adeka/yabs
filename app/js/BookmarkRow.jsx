@@ -61,7 +61,7 @@ Bookmark chrome api schema
                 </div>
                 <img src={this.imageURL} />
                 {this.store.content}
-                <i className="fa fa-remove delete" onClick={this.removeBookmark.bind(this)}/>
+                <i className="fa fa-remove delete" onDoubleClick={this.removeBookmark.bind(this)}/>
                 <i className={editStyle} onClick={this.rename.bind(this)}/>
             </div>
         );

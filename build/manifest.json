@@ -29,5 +29,6 @@
     "chrome://favicon/",
     "activeTab",
     "tabs",
+    "storage"
   ]
 }

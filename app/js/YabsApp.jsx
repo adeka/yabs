@@ -10,6 +10,10 @@ placeholder.className = 'placeholder';
 
 class BookmarkListStore {
     @observable bookmarks = [];
+    @observable pointerState = 'interior';
+    @action setPointerState(state) {
+        this.pointerState = state;
+    }
     load() {
         chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
     }
@@ -17,7 +21,6 @@ class BookmarkListStore {
         //retarded way of accessing "Bookmarks Bar" array of children
         const bookmarkTree = bookmarks[0].children[0].children;
         this.bookmarks = bookmarkTree;
-        console.log(bookmarks);
     }
     static getInstance() {
         if (!this.instance) {

@@ -17,4 +17,31 @@
     }
 }
 
+$red : (name : "red", main : #FF3131, dark: #891414, light: #FFC6C6);
+$tan : (name : "tan", main : #FF6C31, dark: #893514, light: #FFD6C6);
+$orange : (name : "orange", main : #FF8E31, dark: #894914, light: #FFE0C6);
+$skin : (name : "skin", main : #FFA731, dark: #895714, light: #FFE7C6);
+$gold : (name : "gold", main : #FFBA31, dark: #896214, light: #FFECC6);
+$sun : (name : "sun", main : #FFCB31, dark: #896C14, light: #FFF1C6);
+$sunflower : (name : "sunflower", main : #FFDC31, dark: #897514, light: #FFF5C6);
+$yellow : (name : "yellow", main : #FFEC31, dark: #897E14, light: #FFFAC6);
+$spring : (name : "spring", main : #FFFF31, dark: #898914, light: #FFFFC6);
+$salad : (name : "salad", main : #D6F830, dark: #718413, light: #F5FFC6);
+$grass : (name : "grass", main : #AEF12E, dark: #5A7F13, light: #EBFFC6);
+$green : (name : "green", main : #82E92D, dark: #417A12, light: #E0FFC6);
+$emerald : (name : "emerald", main : #29D729, dark: #106D10, light: #C6FFC6);
+$teal : (name : "teal", main : #25C07E, dark: #0E5E3C, light: #C6FFE7);
+$beach : (name : "beach", main : #21AEAE, dark: #0C5252, light: #C5FFFF);
+$babyblue : (name : "babyblue", main : #2C7BB7, dark: #123A58, light: #C9E8FF);
+$blue : (name : "blue", main : #345DBC, dark: #152A5B, light: #CBDBFF);
+$navy : (name : "navy", main : #3C3CC2, dark: #1A1A5F, light: #CECEFF);
+$indigo : (name : "indigo", main : #5736C0, dark: #28175E, light: #D8CCFF);
+$violet : (name : "violet", main : #6E31BE, dark: #33145C, light: #E1CAFF);
+$purple : (name : "purple", main : #892CBC, dark: #41115B, light: #ECC8FF);
+$plum : (name : "plum", main : #B823B8, dark: #590D59, light: #FFC5FF);
+$magenta : (name : "magenta", main : #D7298B, dark: #6D1045, light: #FFC5E6);
+$pink : (name : "pink", main : #EA2C66, dark: #7A1231, light: #FFC5D7);
+
+$colors : $red, $tan, $orange, $skin, $gold, $sun, $sunflower, $yellow, $spring, $salad, $grass, $green, $emerald, $teal, $beach, $babyblue, $blue, $navy, $indigo, $violet, $purple, $plum, $magenta, $pink;
+
 @import 'general.scss';

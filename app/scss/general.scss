@@ -9,6 +9,23 @@ html {
   overflow: scroll;
   user-select: none;
 }
+* {
+    @each $color in $colors {
+        // $i: index($colors, $color);
+        &.#{map-get($color, name)} {
+            color: map-get($color, light);
+            background: transparentize(map-get($color, main), .4);
+        }
+    }
+    .white {
+        background: white;
+        color: #666;
+    }
+    .grey {
+        background: #f8f8f8;
+        color: #666;
+    }
+}
 body {
     padding: 0;
     margin: 0;
@@ -22,71 +39,142 @@ body {
     width:100%;
 }
 .bookmarkGroup {
-    @extend .ScootIn;
+    .interior {
+        &.disabled {
+            pointer-events: none;
+        }
+    }
 
+    .wrap {
+    }
+
+    .colorPicker{
+        overflow-y: auto;
+        overflow-x: hidden;
+        .colorMap{
+            width:100%;
+            background: white;
+            height: 30px;
+            .color {
+                width: 27.7px;
+                height: 15px;
+                float: left;
+                border: 2px solid transparent;
+                &:hover{
+                    border: 2px solid black;
+                }
+            }
+        }
+
+    }
     .header {
+
         font-size: 13px;
-        color: #666;
         font-weight: bold;
-        text-align: center;
-        overflow: auto;
+        text-align: left;
+        overflow: hidden;
         margin: 0 auto;
-        background: linear-gradient(rgb(240, 240, 240), rgb(235, 235, 235));
-        border-bottom: 1px solid #e2e2e2;
         width: 100%;
         cursor: pointer;
         .title{
-            width: 60%;
+            width: 50%;
             float: left;
-            border-right: 1px solid #cecece;
+            //border-right: 1px solid #cecece;
+            white-space: nowrap;
             padding:.5em;
             height: 29px;
             &:hover{
-                background: rgb(230, 230, 230);
+                background: rgba(0, 0, 0, .05);
             }
         }
         input{
             padding: 5px;
-            background: white;
-            border: 1px solid #cecece;
-            border-radius: 2px;
+            background: rgba(255,255,255, .5);
+            &::-webkit-input-placeholder {
+               color: inherit;
+            }
+            //border: 1px solid #cecece;
+            //border-radius: 2px;
             position: relative;
             font-size: 12px;
             padding-top: 4px;
-            border-bottom: none;
+            border: 1px solid transparent;
+            //border-bottom: none;
+        }
+        .fa-folder {
+            float: left;
+            width: 10%;
+            //border-left: 1px solid #eaeaea;
+            //border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            padding-left: 12px;
+            //border-top-right-radius: 20px;
+            //border-bottom-right-radius: 10px;
+            &:hover{
+            }
+            &:after{
+                // content: "-";
+                // width:500px;
+                // height: 3px;
+                // background: inherit;
+                // z-index: 100;
+                // display:inline-block;
+                // position: relative;
+                // bottom: -7px;
+                // left: -15px;
+                // border-top-right-radius: 12em;
+            }
         }
         .fa-plus {
-            width: 20%;
-            border-left: 1px solid #eaeaea;
-            border-right: 1px solid #cecece;
+            width: 10%;
+            //border-left: 1px solid #eaeaea;
+            //border-right: 1px solid #cecece;
             padding:.5em;
             height: 29px;
             &:hover{
-                background: rgb(230, 230, 230);
+                background: rgba(0, 0, 0, .05);
             }
         }
         .fa-remove {
             width: 10%;
-            border-left: 1px solid #eaeaea;
-            border-right: 1px solid #cecece;
+            //border-left: 1px solid #eaeaea;
+            //border-right: 1px solid #cecece;
             padding:.5em;
             height: 29px;
             &:hover{
-                background: rgb(230, 230, 230);
+                background: rgba(0, 0, 0, .05);
             }
         }
         .fa-pencil {
             width: 10%;
-            border-left: 1px solid #eaeaea;
-            border-right: 1px solid #cecece;
+            //border-left: 1px solid #eaeaea;
+            //border-right: 1px solid #cecece;
             padding:.5em;
             height: 29px;
             &:hover{
-                background: rgb(230, 230, 230);
+                background: rgba(0, 0, 0, .05);
+            }
+        }
+        .fa-paint-brush {
+            width: 10%;
+            //border-left: 1px solid #eaeaea;
+            //border-right: 1px solid #cecece;
+            padding:.5em;
+            height: 29px;
+            &:hover{
+                background: rgba(0, 0, 0, .05);
             }
         }
     }
 
+}
+
+
+.placeholder {
+    width: 100%;
+    height: 29px;
+    background: #f0f0f0;
 }
 
 .bookmarkList {
@@ -98,7 +186,7 @@ body {
         width: 100%;
         white-space: nowrap;
         height:32px;
-        background: #f8f8f8;
+        background: #ece8e8;
         img {
             width: 16px;
             float: left;
@@ -111,8 +199,8 @@ body {
             padding: 5px;
             margin-top: 3px;
             background: white;
-            border: 1px solid #cecece;
-            border-radius: 2px;
+            //border: 1px solid #cecece;
+            //border-radius: 2px;
             width: 70%;
             position: relative;
             left: -6px;
@@ -127,7 +215,7 @@ body {
             .title {
                 float: left;
                 overflow:hidden;
-                width: 65%;
+                width: 100%;
                 color: #555;
                 transition: .1s all;
 
@@ -167,7 +255,7 @@ body {
             padding: 10px;
             width: 9%;
             float: right;
-            border-left:1px solid rgb(204, 204, 204);
+            //border-left:1px solid rgb(204, 204, 204);
             &:hover{
                 background:rgba(0,0,0,.1);
             }
@@ -177,8 +265,8 @@ body {
             cursor: pointer;
         }
         &:hover {
-            background: white;
-            border-bottom: 1px solid rgb(240, 240, 240);
+            background: linear-gradient(to right, transparentize( #f8f8f8, .5), #f8f8f8);
+            //border-bottom: 1px solid rgb(240, 240, 240);
             /*
             a .title{
                 font-size: 14px;
@@ -251,10 +339,4 @@ body {
         font-size: 20px;
         color: #777;
     }
-}
-
-li.placeholder {background: rgb(255,240,120);}
-li.placeholder:before {
-  content: "Drop here";
-  color: rgb(225,210,90);
 }
