@@ -26,7 +26,7 @@ import BookmarkRow from './BookmarkRow';
         e.dataTransfer.effectAllowed = 'move';
 
         this.props.store.setPointerState('interior disabled');
-        
+
     }
     dragEnd(e) {
         const from = Number(this.fromIndex);
@@ -50,16 +50,6 @@ import BookmarkRow from './BookmarkRow';
     }
     dragOver(e, id) {
         e.preventDefault();
-
-        // if (e.target.className === 'placeholder' ||
-        //     e.target.className === 'fa-folder' ||
-        //     e.target.className === 'wrap' ||
-        //     e.target.className === 'title'
-        // ) {
-        //     return;
-        // }
-        console.log(e.target.className);
-
         if (e.target.className !== 'placeholder') {
             this.over = e.target;
             const relY = e.clientY - this.over.offsetTop;
@@ -69,14 +59,13 @@ import BookmarkRow from './BookmarkRow';
             this.dragged.style.display = 'none';
             this.overID = id;
 
-            // if (relY > height) {
-            //     this.nodePlacement = 'after';
-            //     parent.insertBefore(this.placeholder, e.target.nextElementSibling);
-            // } else if (relY < height) {
-            //     this.nodePlacement = 'before';
-            //     parent.insertBefore(this.placeholder, e.target);
-            // }
-            parent.insertBefore(this.placeholder, e.target);
+            if (relY > height) {
+                this.nodePlacement = 'after';
+                parent.insertBefore(this.placeholder, e.target.nextElementSibling);
+            } else if (relY < height) {
+                this.nodePlacement = 'before';
+                parent.insertBefore(this.placeholder, e.target);
+            }
         }
     }
     render() {

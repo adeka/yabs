@@ -109,6 +109,7 @@ body {
             padding:.5em;
             height: 29px;
             padding-left: 12px;
+            
             //border-top-right-radius: 20px;
             //border-bottom-right-radius: 10px;
             &:hover{
@@ -127,6 +128,7 @@ body {
             }
         }
         .fa-plus {
+            text-align:center;
             width: 10%;
             //border-left: 1px solid #eaeaea;
             //border-right: 1px solid #cecece;
@@ -137,6 +139,7 @@ body {
             }
         }
         .fa-remove {
+            text-align:center;
             width: 10%;
             //border-left: 1px solid #eaeaea;
             //border-right: 1px solid #cecece;
@@ -147,6 +150,7 @@ body {
             }
         }
         .fa-pencil {
+            text-align:center;
             width: 10%;
             //border-left: 1px solid #eaeaea;
             //border-right: 1px solid #cecece;
@@ -157,6 +161,7 @@ body {
             }
         }
         .fa-paint-brush {
+            text-align:center;
             width: 10%;
             //border-left: 1px solid #eaeaea;
             //border-right: 1px solid #cecece;
