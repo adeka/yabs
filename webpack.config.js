@@ -9,7 +9,7 @@ module.exports = {
             app: `${ __dirname }/app/`,
             fa: 'font-awesome/scss/font-awesome.scss'
         },
-        extensions: ['', '.js', '.jsx', '.scss']
+        extensions: ['', '.js', '.jsx', '.scss', '.json']
     },
     eslint: {
         configFile: './.eslintrc.json',
@@ -32,6 +32,10 @@ module.exports = {
             {
                 test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
                 loader: 'file-loader'
+            },
+            {
+              test: /\.json/,
+              loaders: ["json"]
             },
             {
                 test: /.jsx?$/,

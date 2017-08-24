@@ -21,8 +21,28 @@ export default class Toolbar extends React.Component {
         this.props.store.load();
         console.log('added folder');
     }
-    onChange() {
-
+    onChange(e) {
+        const val = e.target.value;
+        chrome.bookmarks.getTree((tree) => {
+            let bookmarks = tree[0].children[0].children;
+            bookmarks = this.filter(bookmarks, val);
+            this.props.store.assignBookmarks(bookmarks);
+        });
+    }
+    filter(bookmarks, stringIn) {
+        const result = [];
+        const string = stringIn.toLowerCase();
+        for (const bookmark of bookmarks) {
+            if (bookmark.children) {
+                bookmark.children = this.filter(bookmark.children, string);
+            }
+            if (bookmark.title.toLowerCase().includes(string) ||
+                (bookmark.url && bookmark.url.toLowerCase().includes(string)) ||
+                (bookmark.children && bookmark.children.length > 0)) {
+                result.push(bookmark);
+            }
+        }
+        return result;
     }
     render() {
         return (

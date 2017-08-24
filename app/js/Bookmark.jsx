@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import { observer } from 'mobx-react';
 import { observable, action, computed, autorun } from 'mobx';
 
-class BookmarkStore extends React.Component  {
+class BookmarkStore extends React.Component {
     @observable content = <div></div>;
+    @observable info = <div></div>;
     @action setContent(content) {
         this.content = content;
+    }
+    @action setInfo(info) {
+        this.info = info;
     }
 }
 
@@ -60,7 +64,7 @@ class BookmarkStore extends React.Component  {
         this.nameField = field;
     }
     onChange() {
-
+        console.log('changed input');
     }
     rename() {
         this.renaming = !this.renaming;

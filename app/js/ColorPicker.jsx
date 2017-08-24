@@ -8,7 +8,17 @@ export default class ColorPicker extends React.Component {
     }
     constructor(props) {
         super(props);
-        const colors = ['grey', 'white', 'red', 'tan', 'orange', 'skin', 'gold', 'sun', 'sunflower', 'yellow', 'spring', 'salad', 'grass', 'green', 'emerald', 'teal', 'beach', 'babyblue', 'blue', 'navy', 'indigo', 'violet', 'purple', 'plum', 'magenta', 'pink'];
+        const colors = [
+            'grey', 'white', 'red',
+            'tan', 'orange', 'skin',
+            'gold', 'sun', 'sunflower',
+            'yellow', 'spring', 'salad',
+            'grass', 'green', 'emerald',
+            'teal', 'beach', 'babyblue',
+            'blue', 'navy', 'indigo',
+            'violet', 'purple', 'plum',
+            'magenta', 'pink'
+        ];
         this.colorMap = colors.map((color, i) => {
             return <Color color={color} key={i} setColor={this.props.setColor} />;
         });

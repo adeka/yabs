@@ -7,6 +7,7 @@ import 'fa';
 import BookmarkRow from './BookmarkRow';
 import Bookmark from './Bookmark';
 import ColorPicker from './ColorPicker';
+import Metascraper from 'metascraper';
 
 @observer export default class BookmarkGroup extends Bookmark {
     constructor(props) {
@@ -47,14 +48,15 @@ import ColorPicker from './ColorPicker';
             const bookmark = {
                 parentId: id,
                 index: 0,
-                title: url,
+                title: tabs[0].title,
                 url: url
             };
-            chrome.bookmarks.create(bookmark);
-            if (!this.state.collapsed) {
-                this.expand();
-            }
-            this.props.store.load();
+            chrome.bookmarks.create(bookmark, (result) => {
+                if (!this.state.collapsed) {
+                    this.expand();
+                }
+                this.props.store.load();
+            });
         });
     }
     removeFolder() {
@@ -71,7 +73,7 @@ import ColorPicker from './ColorPicker';
     setColor(color) {
         this.setState({ style: `fa fa-folder ${ color }` });
         const updateBookmark = { };
-        updateBookmark[this.props.id] = { 'color': color };
+        updateBookmark[this.props.id] = { color: color };
         chrome.storage.sync.set(updateBookmark);
         this.showColors();
     }

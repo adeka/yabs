@@ -1,34 +1,36 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Gramps YABS",
-  "description": "Bookmark Manager",
-  "version": "1.0",
+    "name": "Gramps YABS",
+    "description": "Bookmark Manager",
+    "version": "1.0",
 
-  "commands": {
-    "toggle_yabs": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+E",
-        "mac": "Command+Shift+E"
-      },
-      "description": "Toggle"
-    }
-  },
+    "commands": {
+        "toggle_yabs": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+E",
+                "mac": "Command+Shift+E"
+            },
+            "description": "Toggle"
+        }
+    },
 
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
-  },
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
 
-  "chrome_url_overrides" : {
-    "newtab": "popup.html"
-  },
-
-  "permissions": [
-    "bookmarks",
-    "chrome://favicon/",
-    "activeTab",
-    "tabs",
-    "storage"
-  ]
+    "chrome_url_overrides" : {
+        "newtab": "popup.html"
+    },
+    "background": {
+        "page": "popup.html"
+    },
+    "permissions": [
+        "bookmarks",
+        "chrome://favicon/",
+        "activeTab",
+        "tabs",
+        "storage"
+    ]
 }

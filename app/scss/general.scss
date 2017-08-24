@@ -39,6 +39,16 @@ body {
     width:100%;
 }
 .bookmarkGroup {
+    // $count : 100;
+    // transition: .3s top;
+    // @for $i from 1 through $count {
+    //     $offset: $i * 30;
+    //     &:nth-child(#{$i}){
+    //         position: absolute;
+    //         top: #{$offset}px;
+    //         width: 100%;
+    //     }
+    // }
     .interior {
         &.disabled {
             pointer-events: none;
@@ -109,7 +119,7 @@ body {
             padding:.5em;
             height: 29px;
             padding-left: 12px;
-            
+
             //border-top-right-radius: 20px;
             //border-bottom-right-radius: 10px;
             &:hover{
@@ -206,7 +216,7 @@ body {
             background: white;
             //border: 1px solid #cecece;
             //border-radius: 2px;
-            width: 70%;
+            width: 60%;
             position: relative;
             left: -6px;
             font-size: 12px;
@@ -214,7 +224,7 @@ body {
         }
         a{
             line-height: 30px;
-            width: 70%;
+            width: 60%;
             height:29px;
             display: inline-block;
             .title {
@@ -255,7 +265,7 @@ body {
                 color: rgb(82, 34, 0);
             }
         }
-        .edit, .delete {
+        .edit, .delete, .question {
             color: #666;
             padding: 10px;
             width: 9%;
@@ -269,8 +279,16 @@ body {
             }
             cursor: pointer;
         }
+        .info {
+            background: #e2d9d9;
+            width:100%;
+            white-space: normal;
+            padding: 10px;
+            overflow: auto;
+        }
         &:hover {
-            background: linear-gradient(to right, transparentize( #f8f8f8, .5), #f8f8f8);
+            //background: linear-gradient(to right, transparentize( #f8f8f8, .5), #f8f8f8);
+            background: transparentize(#ece8e8, .5);
             //border-bottom: 1px solid rgb(240, 240, 240);
             /*
             a .title{

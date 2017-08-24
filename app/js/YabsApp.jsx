@@ -15,12 +15,15 @@ class BookmarkListStore {
         this.pointerState = state;
     }
     load() {
-        chrome.bookmarks.getTree(this.assignBookmarks.bind(this));
+        chrome.bookmarks.getTree(this.loadBookmarks.bind(this));
     }
-    assignBookmarks(bookmarks) {
+    loadBookmarks(bookmarks) {
         //retarded way of accessing "Bookmarks Bar" array of children
         const bookmarkTree = bookmarks[0].children[0].children;
         this.bookmarks = bookmarkTree;
+    }
+    @action assignBookmarks(bookmarks) {
+        this.bookmarks = bookmarks;
     }
     static getInstance() {
         if (!this.instance) {
@@ -33,8 +36,13 @@ class BookmarkListStore {
 export default class YabsApp extends React.Component {
     constructor() {
         super();
+        const test = require('./test.json');
+        console.log(test);
         this.store = new BookmarkListStore();
         this.store.load();
+        chrome.commands.onCommand.addListener((command) => {
+            console.log('Command:', command);
+        });
     }
     render() {
         return (

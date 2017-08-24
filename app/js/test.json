@@ -1,0 +1,153 @@
+{
+    "status": "ok",
+    "statement": [
+        {
+            "type": "registration",
+            "name": "Registration",
+            "date": "2016-11-05T05:00:00Z"
+        },
+        {
+            "type": "purchase_transactions",
+            "name": "Purchase Transactions",
+            "date": "2016-10-05T05:00:00Z",
+            "details": {
+                "base_points": 10,
+                "multiplier_points": 20,
+                "total_points": 30
+            }
+        },
+        {
+            "type": "non_transactional_activities",
+            "name": "Non-Transactional Activities",
+            "date": "2016-09-05T05:00:00Z",
+            "behavior": "Open and Close App 4000 Times",
+            "points": "10"
+        },
+        {
+            "type": "achievements_earned",
+            "name": "Achievements Earned",
+            "date": "2016-08-05T05:00:00Z",
+            "achievement_name": "Claim 10,000 Rewards Achievement",
+            "points": "20"
+        },
+        {
+            "type": "achievements_claimed",
+            "name": "Achievements Claimed",
+            "date": "2016-07-05T05:00:00Z",
+            "achievement_name" : "Buy 1 Spaceship Achievement",
+            "points": "1000"
+        },
+        {
+            "type": "rewards_exchanged",
+            "name": "Rewards Exchanged",
+            "date": "2016-06-05T05:00:00Z",
+            "reward_name": "Fat Dad Reward",
+            "points": "30"
+        },
+        {
+            "type": "rewards_fullfilled",
+            "name": "Rewards Fulfilled",
+            "date": "2016-05-05T05:00:00Z",
+            "reward_name": "Happy Dingo Reward",
+            "details": {
+                "store_display_name": "Amazon",
+                "transaction_date": "2016-02-05T05:00:00Z",
+                "posted_date": "2016-02-05T05:00:00Z"
+            }
+        },
+        {
+            "type": "rewards_expired",
+            "name": "Rewards Expired",
+            "date": "2016-04-05T05:00:00Z",
+            "reward_name": "Angry Lumberjack Reward"
+        },
+        {
+            "type": "tier_advancement",
+            "name": "Tier Advancement",
+            "date": "2016-03-05T05:00:00Z",
+            "tier_name": "S Tier"
+        },
+        {
+            "type": "tier_dropping",
+            "name": "Tier Dropping",
+            "date": "2016-02-05T05:00:00Z",
+            "tier_name": "F Tier"
+        },
+        {
+            "type": "manual_comping_of_points_with_reason",
+            "name": "Manual Comping of points w/ reason",
+            "date": "2016-12-05T05:00:00Z",
+            "points": "5000",
+            "reason_code": "43WERDFH",
+            "reason_description": "Application Crashed"
+        },
+        {
+            "type": "bulk_comping_of_points_with_reason",
+            "name": "Bulk comping of points w/ reason",
+            "date": "2016-11-05T05:00:00Z",
+            "points": "5000",
+            "reason_code": "43WERDFH",
+            "reason_description": "Server side bug"
+        },
+        {
+            "type": "communication_opt_ins",
+            "name": "Communication Opt-Ins",
+            "date": "2016-10-05T05:00:00Z",
+            "channel_name": "McDonalds"
+        },
+        {
+            "type": "communication_opt_outs",
+            "name": "Communication Opt-Outs",
+            "date": "2016-09-05T05:00:00Z",
+            "channel_name": "McDonalds"
+        },
+        {
+            "type": "point_cap_reached",
+            "name": "Point Cap Reached",
+            "date": "2016-08-05T05:00:00Z"
+        },
+        {
+            "type": "triggered_communications",
+            "name": "Triggered Communications",
+            "date": "2016-07-05T05:00:00Z",
+            "campaign_display_name": "Awesome Cool Campaign"
+        },
+        {
+            "type": "loyalty_card_added",
+            "name": "Loyalty Card Added",
+            "date": "2016-06-05T05:00:00Z",
+            "loyalty_card_id": "1376846538"
+        },
+        {
+            "type": "loyalty_card_removed",
+            "name": "Loyalty Card Removed",
+            "date": "2016-05-05T05:00:00Z",
+            "loyalty_card_id": "1376846538"
+        },
+        {
+            "type": "expired_points",
+            "name": "Expired Points",
+            "date": "2016-04-05T05:00:00Z",
+            "expired_points": "2500"
+        },
+        {
+            "type": "terminated_points",
+            "name": "Terminated Points",
+            "date": "2016-03-05T05:00:00Z",
+            "terminated_points": "1000"
+        },
+        {
+            "type": "account_termination",
+            "name": "Account Termination",
+            "date": "2016-02-05T05:00:00Z"
+        },
+        {
+            "type": "comments_with_reason_code",
+            "name": "Comments W/ Reason Code",
+            "date": "2016-01-05T05:00:00Z",
+            "operator_name": "Jack Jackson",
+            "comment_code": "F43EDFT4",
+            "comment_description": "Reset Account Password"
+        }
+    ]
+}
